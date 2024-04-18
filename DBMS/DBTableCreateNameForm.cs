@@ -4,27 +4,27 @@ namespace DBMS
 {
     public partial class DBTableCreateNameForm : Form
     {
-        DBFile DBPv;
-        public DBTableCreateNameForm(DBFile DBPv)
+        readonly DBFile _DBActive;
+
+        public DBTableCreateNameForm(DBFile DBActive)
         {
             InitializeComponent();
-            this.DBPv = DBPv;
+            _DBActive = DBActive;
         }
 
         private void ButtonCreate_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(TextBoxTableName.Text))
             {
-                if (!DBPv.TableIsExist(TextBoxTableName.Text))
+                if (_DBActive.CreateTable(TextBoxTableName.Text))
                 {
-                    if (DBPv.CreateTable(TextBoxTableName.Text))
-                    {
-                        MessageBox.Show("Table successfuly created", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Table already exists", "Exists", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show
+                    (
+                        "Table successfully created", 
+                        "Success", 
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
             }
         }

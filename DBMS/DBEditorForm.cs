@@ -4,8 +4,10 @@ namespace DBMS
 {
     public partial class DBEditorForm : Form
     {
-        readonly string pathToDB;
-        DBFile DBFile;
+        /// <summary>
+        /// Активный в данный момент файл БД.
+        /// </summary>
+        readonly DBFile DBActive;
 
         public DBEditorForm(string pathToDB)
         {
@@ -16,14 +18,13 @@ namespace DBMS
                 throw new ArgumentNullException(nameof(pathToDB), "Requires path to DB");
             }
 
-            this.pathToDB = pathToDB;
-            DBFile = new DBFile(pathToDB);
+            DBActive = new DBFile(pathToDB);
             ScanDB();
         }
 
         void ScanDB()
         {
-            foreach (var item in DBFile.ReadTablesDB())
+            foreach (var item in DBActive.Tables)
             {
                 ListViewTables.Items.Add(item);
             }
@@ -37,7 +38,7 @@ namespace DBMS
 
         private void ButtonCreateTable_Click(object sender, EventArgs e)
         {
-            var dbtcn = new DBTableCreateNameForm(DBFile);
+            var dbtcn = new DBTableCreateNameForm(DBActive);
             dbtcn.Show();
             dbtcn.FormClosed += Dbtcn_FormClosed;
         }
@@ -65,7 +66,7 @@ namespace DBMS
                     {
                         for (int i = 0; i < ListViewTables.SelectedItems.Count; i++)
                         {
-                            DBFile.DropTable(ListViewTables.SelectedItems[i].Text);
+                            DBActive.DropTable(ListViewTables.SelectedItems[i].Text);
                         }
 
                         RefreshListView();
@@ -92,7 +93,7 @@ namespace DBMS
             {
                 ListViewTableInfo.Columns.Clear();
                 ListViewTableInfo.Items.Clear();
-                var (names, vals) = DBFile.TableScheme(ListViewTables.SelectedItems[0].Text);
+                var (names, vals) = DBActive.TableScheme(ListViewTables.SelectedItems[0].Text);
 
                 for (int i = 0; i < names.Length; i++)
                 {
@@ -102,9 +103,14 @@ namespace DBMS
                     };
                     ListViewTableInfo.Columns.Add(colH);
                 }
-                
+
                 ListViewTableInfo.Items.Add(new ListViewItem(vals));
             }
+        }
+
+        private void ButtonQuit_Click(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }

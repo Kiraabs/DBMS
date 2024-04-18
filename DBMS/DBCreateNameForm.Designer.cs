@@ -1,6 +1,6 @@
 ﻿namespace DBMS
 {
-    partial class DBCreateNameForm
+    partial class DBCreateForm
     {
         /// <summary>
         /// Required designer variable.

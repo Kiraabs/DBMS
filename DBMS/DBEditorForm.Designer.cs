@@ -33,7 +33,7 @@
             ButtonCreateTable = new Button();
             ButtonDropTable = new Button();
             button3 = new Button();
-            ButtonSaQ = new Button();
+            ButtonQuit = new Button();
             SuspendLayout();
             // 
             // ListViewTables
@@ -84,21 +84,22 @@
             button3.Text = "Modife Table";
             button3.UseVisualStyleBackColor = true;
             // 
-            // ButtonSaQ
+            // ButtonQuit
             // 
-            ButtonSaQ.Location = new Point(381, 12);
-            ButtonSaQ.Name = "ButtonSaQ";
-            ButtonSaQ.Size = new Size(117, 30);
-            ButtonSaQ.TabIndex = 5;
-            ButtonSaQ.Text = "Save and Quit";
-            ButtonSaQ.UseVisualStyleBackColor = true;
+            ButtonQuit.Location = new Point(381, 12);
+            ButtonQuit.Name = "ButtonQuit";
+            ButtonQuit.Size = new Size(117, 30);
+            ButtonQuit.TabIndex = 5;
+            ButtonQuit.Text = "Quit";
+            ButtonQuit.UseVisualStyleBackColor = true;
+            ButtonQuit.Click += ButtonQuit_Click;
             // 
             // DBEditorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(952, 450);
-            Controls.Add(ButtonSaQ);
+            Controls.Add(ButtonQuit);
             Controls.Add(button3);
             Controls.Add(ButtonDropTable);
             Controls.Add(ButtonCreateTable);
@@ -108,7 +109,7 @@
             MaximizeBox = false;
             Name = "DBEditorForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Editor";
+            Text = "Database Editor";
             ResumeLayout(false);
         }
 
@@ -119,6 +120,6 @@
         private Button ButtonCreateTable;
         private Button ButtonDropTable;
         private Button button3;
-        private Button ButtonSaQ;
+        private Button ButtonQuit;
     }
 }

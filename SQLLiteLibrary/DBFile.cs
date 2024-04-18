@@ -1,79 +1,116 @@
 ﻿using System.Data;
-using System.Data.SqlClient;
 using System.Data.SQLite;
 
 namespace SQLLiteLibrary
 {   
     /// <summary>
-    /// Представляет файл БД.
+    /// Represents DB file.
     /// </summary>
     public class DBFile
     {
-        readonly string pathToDBFile;
-        readonly SQLiteConnection cnn = null!;
+        readonly string _path;
+        readonly SQLiteConnection _cnn;
+        readonly List<string> _tables = [];
+        SQLiteCommand? _cmd;
+        SQLiteDataReader? _rdr;
 
-        public DBFile(string pathToDBFile)
+        public List<string> Tables { get => _tables; }
+
+        public DBFile(string dbFilePath)
         {
-            if (string.IsNullOrWhiteSpace(pathToDBFile))
+            if (string.IsNullOrWhiteSpace(dbFilePath))
             {
-                throw new ArgumentNullException(nameof(pathToDBFile), "Requires path to DB");
+                throw new ArgumentNullException(nameof(dbFilePath), "Requires path to DB!");
             }
 
-            this.pathToDBFile = $"Data Source={pathToDBFile}";
-            cnn = new SQLiteConnection(this.pathToDBFile);
+            _path = $"Data Source={dbFilePath}";
+            _cnn = new SQLiteConnection(_path);
+            ReadWriteTables();
         }
 
-        public List<string> ReadTablesDB()
+        ~DBFile()
         {
+            _cnn.Dispose();
+            _cmd!.Dispose();
+            _rdr!.Dispose(); // never null, stupid VS
+        }
+
+        public static bool JustCreate(string name)
+        {
+            name = $"{DBRootDir.Name}\\{name}.db";
+
+            if (File.Exists(name))
+            {
+                MessageBox.Show
+                (
+                    "DB with entered name already exists!",
+                    "Exists",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+
+                return false;
+            }
+
             try
             {
-                Connect();
-                var sqlc = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", cnn);
-                var ex = sqlc.ExecuteReader();
-                var l = new List<string>();
-
-                while (ex.Read())
-                {
-                    if (ex.GetString(0) != "sqlite_sequence")
-                    {
-                        l.Add(ex.GetString("name"));
-                    }
-                }
-
-                Disconnect();
-                return l;
+                var f = File.Create(name);
+                f.Close();
+                MessageBox.Show
+                (
+                    "DB successfully created!",
+                    "Success",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+                return true;    
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                throw;
+                MessageBox.Show
+                (
+                    ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
-        }
 
-        public bool TableIsExist(string name)
-        {
-            return ReadTablesDB().Contains(name);
+            return false;
         }
 
         public bool CreateTable(string name)
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
+                if (TableIsExist(name))
+                {
+                    MessageBox.Show
+                    (
+                        "Table with entered name already exists!", 
+                        "Exists", 
+                        MessageBoxButtons.OK, 
+                        MessageBoxIcon.Warning
+                    );
+
+                    return false;
+                }
+
                 try
                 {
                     Connect();
-                    var sqlc = new SQLiteCommand
+                    _cmd = new SQLiteCommand
                     (
-                        $"CREATE TABLE {name} (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));", cnn
+                        $"CREATE TABLE {name} (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));", _cnn
                     );
-                    sqlc.ExecuteNonQuery();
+                    _cmd.ExecuteNonQuery();
                     Disconnect();
+                    ReadWriteTables();
                     return true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
                 }
             }
 
@@ -82,27 +119,24 @@ namespace SQLLiteLibrary
 
         public bool DropTable(string name)
         {
-            if (!string.IsNullOrWhiteSpace(name) && TableIsExist(name))
+            if (!string.IsNullOrWhiteSpace(name) && TableIsExist(name)) // last con-on - just in case
             {
                 try
                 {
                     Connect();
-                    var sqlc = new SQLiteCommand
-                    (
-                        $"DROP TABLE {name}", cnn
-                    );
-                    sqlc.ExecuteNonQuery();
+                    _cmd = new SQLiteCommand($"DROP TABLE {name}", _cnn); 
+                    _cmd.ExecuteNonQuery();
                     Disconnect();
+                    ReadWriteTables(true);
                     return true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
                 }
             }
 
-            return true;
+            return false;
         }
 
         public (string[] names, string[] vals) TableScheme(string name)
@@ -112,7 +146,7 @@ namespace SQLLiteLibrary
                 if (!string.IsNullOrWhiteSpace(name))
                 {
                     Connect();
-                    var sqlc = new SQLiteCommand($"PRAGMA table_info('{name}')", cnn);
+                    var sqlc = new SQLiteCommand($"PRAGMA table_info('{name}')", _cnn);
                     var ex = sqlc.ExecuteReader();
                     var names = new string[ex.FieldCount];
                     var vals = new string[ex.FieldCount];
@@ -139,42 +173,68 @@ namespace SQLLiteLibrary
             }
         }
 
-        public bool Connect()
+        void ReadWriteTables(bool clr = false)
         {
-            if (cnn.State == ConnectionState.Closed)
+            try
+            {
+                Connect();
+                _cmd = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", _cnn);
+                _rdr = _cmd.ExecuteReader();
+                if (clr) _tables.Clear();
+
+                while (_rdr.Read())
+                {
+                    if (_rdr.GetString(0) != "sqlite_sequence" && !_tables.Contains(_rdr.GetString(0)))
+                    {
+                        _tables.Add(_rdr.GetString(0));
+                    }
+                }
+
+                Disconnect();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+        }
+
+        bool Connect()
+        {
+            if (_cnn.State == ConnectionState.Closed) 
             {
                 try
                 {
-                    cnn.Open();
+                    _cnn.Open();
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
                 }
-                return true;
             }
 
             return false;
         }
 
-        public bool Disconnect()
+        bool Disconnect()
         {
-            if (cnn.State == ConnectionState.Open)
+            if (_cnn.State == ConnectionState.Open)
             {
                 try
                 {
-                    cnn.Close();
+                    _cnn.Close();
+                    return true;
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return false;
                 }
-                return true;
             }
 
             return false;
         }
+
+        bool TableIsExist(string name) => _tables.Contains(name);
     }
 }
