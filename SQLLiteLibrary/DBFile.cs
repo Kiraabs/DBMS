@@ -6,7 +6,7 @@ namespace SQLLiteLibrary
     /// <summary>
     /// Represents DB file.
     /// </summary>
-    public class DBFile
+    public partial class DBFile
     {
         readonly string _path;
         readonly SQLiteConnection _cnn;
@@ -33,50 +33,6 @@ namespace SQLLiteLibrary
             _cnn.Dispose();
             _cmd!.Dispose();
             _rdr!.Dispose(); // never null, stupid VS
-        }
-
-        public static bool JustCreate(string name)
-        {
-            name = $"{DBRootDir.Name}\\{name}.db";
-
-            if (File.Exists(name))
-            {
-                MessageBox.Show
-                (
-                    "DB with entered name already exists!",
-                    "Exists",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-
-                return false;
-            }
-
-            try
-            {
-                var f = File.Create(name);
-                f.Close();
-                MessageBox.Show
-                (
-                    "DB successfully created!",
-                    "Success",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-                return true;    
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show
-                (
-                    ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
-            }
-
-            return false;
         }
 
         public bool CreateTable(string name)
@@ -184,7 +140,7 @@ namespace SQLLiteLibrary
 
                 while (_rdr.Read())
                 {
-                    if (_rdr.GetString(0) != "sqlite_sequence" && !_tables.Contains(_rdr.GetString(0)))
+                    if (!_tables.Contains(_rdr.GetString(0)))
                     {
                         _tables.Add(_rdr.GetString(0));
                     }

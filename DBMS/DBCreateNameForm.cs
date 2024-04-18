@@ -13,7 +13,7 @@ namespace DBMS
         {
             if (!string.IsNullOrWhiteSpace(TextBoxDBName.Text))
             {
-                if (DBFile.JustCreate(TextBoxDBName.Text))
+                if (DBFile.Create(TextBoxDBName.Text))
                 {
                     TextBoxDBName.Clear();
                 }

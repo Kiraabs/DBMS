@@ -12,9 +12,12 @@ namespace DBMS
 
         void ScanDBFold()
         {
-            foreach (var fi in DBRootDir.Info.GetFiles())
+            foreach (var fi in DBRoot.Dir.GetFiles())
             {
-                ListViewDBs.Items.Add(fi.Name);
+                if (fi.Extension.Contains(".db"))
+                {
+                    ListViewDBs.Items.Add(fi.Name.Replace(fi.Extension, string.Empty));
+                }
             }
         }
 
@@ -28,46 +31,55 @@ namespace DBMS
         {
             var dbc = new DBCreateForm();
             dbc.Show();
-            dbc.FormClosed += Dbn_FormClosed;
+            dbc.FormClosed += Dbc_FormClosed;
         }
 
-        void Dbn_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
+        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
 
         void ButtonDropDB_Click(object sender, EventArgs e)
         {
-            if (ListViewDBs.SelectedItems.Count != 0)
+            if (ListViewDBs.SelectedItems.Count == 0)
             {
-                var mbr = MessageBox.Show
+                MessageBox.Show
                 (
-                    $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} DB (-s)?",
-                    "Confirmation",
-                    MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Question
+                    "Please, select at least one or several DB (-s) to drop!",
+                    "Not selected",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
                 );
+                return;
+            }
 
-                if (mbr == DialogResult.Yes)
+            var mbr = MessageBox.Show
+            (
+                $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} DB (-s)?",
+                "Confirmation",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question
+            );
+
+            if (mbr == DialogResult.Yes)
+            {
+                bool atLsOneDropped = false;
+
+                for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
                 {
-                    try
+                    if (DBFile.Drop(ListViewDBs.SelectedItems[i].Text))
                     {
-                        for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
-                        {
-                            var si = ListViewDBs.SelectedItems[i];
-                            File.Delete($"{DBRootDir.Name}\\{si.Text}");
-                        }
+                        atLsOneDropped = true;
+                    }
+                }
 
-                        RefreshListView();
-                        MessageBox.Show
-                        (
-                            $"Selected DB (-s) was successfully dropped!",
-                            "Success",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                if (atLsOneDropped)
+                {
+                    RefreshListView();
+                    MessageBox.Show
+                    (
+                        $"Selected DB (-s) was successfully dropped!",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
             }
         }
@@ -76,7 +88,7 @@ namespace DBMS
         {
             if (ListViewDBs.SelectedItems.Count == 1)
             {
-                var dbe = new DBEditorForm($"{DBRootDir.Name}\\{ListViewDBs.SelectedItems[0].Text}");
+                var dbe = new DBEditorForm($"{DBRoot.Name}\\{ListViewDBs.SelectedItems[0].Text}");
                 dbe.ShowDialog();
             }
             else
