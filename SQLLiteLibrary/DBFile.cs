@@ -3,7 +3,10 @@ using System.Data.SqlClient;
 using System.Data.SQLite;
 
 namespace SQLLiteLibrary
-{
+{   
+    /// <summary>
+    /// Представляет файл БД.
+    /// </summary>
     public class DBFile
     {
         readonly string pathToDBFile;
@@ -18,23 +21,30 @@ namespace SQLLiteLibrary
 
             this.pathToDBFile = $"Data Source={pathToDBFile}";
             cnn = new SQLiteConnection(this.pathToDBFile);
-            
         }
 
         public List<string> ReadTablesDB()
         {
-            Connect();
-            var sqlc = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", cnn);
-            var ex = sqlc.ExecuteReader();
-            var l = new List<string>();
-
-            while (ex.Read())
+            try
             {
-                l.Add(ex.GetString("name"));
-            }
+                Connect();
+                var sqlc = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", cnn);
+                var ex = sqlc.ExecuteReader();
+                var l = new List<string>();
 
-            Disconnect();
-            return l;
+                while (ex.Read())
+                {
+                    l.Add(ex.GetString("name"));
+                }
+
+                Disconnect();
+                return l;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
         }
 
         public bool TableIsExist(string name)
@@ -92,11 +102,53 @@ namespace SQLLiteLibrary
             return true;
         }
 
+        public (string[] names, string[] vals) TableScheme(string name)
+        {
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    Connect();
+                    var sqlc = new SQLiteCommand($"PRAGMA table_info('{name}')", cnn);
+                    var ex = sqlc.ExecuteReader();
+                    var names = new string[ex.FieldCount];
+                    var vals = new string[ex.FieldCount];
+
+                    while (ex.Read())
+                    {
+                        for (int i = 0; i < ex.FieldCount; i++)
+                        {
+                            names[i] = ex.GetName(i);
+                            vals[i] = ex.GetValue(i).ToString()!;
+                        }
+                    }
+
+                    Disconnect();
+                    return (names, vals);
+                }
+
+                return (null!, null!);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+        }
+
         public bool Connect()
         {
-            if (cnn.State == ConnectionState.Closed) 
+            if (cnn.State == ConnectionState.Closed)
             {
-                cnn.Open();
+                try
+                {
+                    cnn.Open();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
                 return true;
             }
 
@@ -107,7 +159,15 @@ namespace SQLLiteLibrary
         {
             if (cnn.State == ConnectionState.Open)
             {
-                cnn.Close();
+                try
+                {
+                    cnn.Close();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
                 return true;
             }
 

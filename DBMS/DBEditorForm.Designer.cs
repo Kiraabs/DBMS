@@ -30,9 +30,6 @@
         {
             ListViewTables = new ListView();
             ListViewTableInfo = new ListView();
-            cTabName = new ColumnHeader();
-            cTabType = new ColumnHeader();
-            cTabScheme = new ColumnHeader();
             ButtonCreateTable = new Button();
             ButtonDropTable = new Button();
             button3 = new Button();
@@ -47,28 +44,16 @@
             ListViewTables.TabIndex = 0;
             ListViewTables.UseCompatibleStateImageBehavior = false;
             ListViewTables.View = View.List;
+            ListViewTables.SelectedIndexChanged += ListViewTables_SelectedIndexChanged;
             // 
             // ListViewTableInfo
             // 
-            ListViewTableInfo.Columns.AddRange(new ColumnHeader[] { cTabName, cTabType, cTabScheme });
             ListViewTableInfo.Location = new Point(504, 12);
             ListViewTableInfo.Name = "ListViewTableInfo";
             ListViewTableInfo.Size = new Size(436, 426);
             ListViewTableInfo.TabIndex = 1;
             ListViewTableInfo.UseCompatibleStateImageBehavior = false;
             ListViewTableInfo.View = View.Details;
-            // 
-            // cTabName
-            // 
-            cTabName.Text = "Name";
-            // 
-            // cTabType
-            // 
-            cTabType.Text = "Type";
-            // 
-            // cTabScheme
-            // 
-            cTabScheme.Text = "Scheme";
             // 
             // ButtonCreateTable
             // 
@@ -131,12 +116,9 @@
 
         private ListView ListViewTables;
         private ListView ListViewTableInfo;
-        private ColumnHeader cTabName;
         private Button ButtonCreateTable;
         private Button ButtonDropTable;
         private Button button3;
-        private ColumnHeader cTabType;
-        private ColumnHeader cTabScheme;
         private Button ButtonSaQ;
     }
 }

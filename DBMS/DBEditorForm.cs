@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using SQLLiteLibrary;
+﻿using SQLLiteLibrary;
 
 namespace DBMS
 {
@@ -92,6 +83,27 @@ namespace DBMS
                         throw;
                     }
                 }
+            }
+        }
+
+        private void ListViewTables_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ListViewTables.SelectedItems.Count == 1)
+            {
+                ListViewTableInfo.Columns.Clear();
+                ListViewTableInfo.Items.Clear();
+                var (names, vals) = DBFile.TableScheme(ListViewTables.SelectedItems[0].Text);
+
+                for (int i = 0; i < names.Length; i++)
+                {
+                    var colH = new ColumnHeader()
+                    {
+                        Text = names[i],
+                    };
+                    ListViewTableInfo.Columns.Add(colH);
+                }
+                
+                ListViewTableInfo.Items.Add(new ListViewItem(vals));
             }
         }
     }
