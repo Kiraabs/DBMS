@@ -1,10 +1,10 @@
 ﻿namespace DBMS
 {
-    public partial class DBNameForm : Form
+    public partial class DBCreateNameForm : Form
     {
         readonly string pathToDBs;
 
-        public DBNameForm(string pathToDBs)
+        public DBCreateNameForm(string pathToDBs)
         {
             InitializeComponent();
 

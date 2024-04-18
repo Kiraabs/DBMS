@@ -1,6 +1,6 @@
 ﻿namespace DBMS
 {
-    partial class DBNameForm
+    partial class DBCreateNameForm
     {
         /// <summary>
         /// Required designer variable.
@@ -34,14 +34,14 @@
             // 
             // TextBoxDBName
             // 
-            TextBoxDBName.Location = new Point(12, 36);
+            TextBoxDBName.Location = new Point(12, 12);
             TextBoxDBName.Name = "TextBoxDBName";
             TextBoxDBName.Size = new Size(488, 23);
             TextBoxDBName.TabIndex = 0;
             // 
             // ButtonCreate
             // 
-            ButtonCreate.Location = new Point(425, 65);
+            ButtonCreate.Location = new Point(425, 41);
             ButtonCreate.Name = "ButtonCreate";
             ButtonCreate.Size = new Size(75, 23);
             ButtonCreate.TabIndex = 1;
@@ -49,16 +49,16 @@
             ButtonCreate.UseVisualStyleBackColor = true;
             ButtonCreate.Click += ButtonCreate_Click;
             // 
-            // DBNameForm
+            // DBCreateNameForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(512, 99);
+            ClientSize = new Size(512, 71);
             Controls.Add(ButtonCreate);
             Controls.Add(TextBoxDBName);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
-            Name = "DBNameForm";
+            Name = "DBCreateNameForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Database Create";
             ResumeLayout(false);

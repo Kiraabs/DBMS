@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             ButtonAddDB = new Button();
-            ButtonRemoveDB = new Button();
+            ButtonDropBD = new Button();
             ButtonEditor = new Button();
             ButtonAIS = new Button();
             ListViewDBs = new ListView();
@@ -45,15 +45,15 @@
             ButtonAddDB.UseVisualStyleBackColor = true;
             ButtonAddDB.Click += ButtonAddDB_Click;
             // 
-            // ButtonRemoveDB
+            // ButtonDropBD
             // 
-            ButtonRemoveDB.Location = new Point(12, 282);
-            ButtonRemoveDB.Name = "ButtonRemoveDB";
-            ButtonRemoveDB.Size = new Size(119, 23);
-            ButtonRemoveDB.TabIndex = 1;
-            ButtonRemoveDB.Text = "Remove DB";
-            ButtonRemoveDB.UseVisualStyleBackColor = true;
-            ButtonRemoveDB.Click += ButtonRemoveDB_Click;
+            ButtonDropBD.Location = new Point(12, 282);
+            ButtonDropBD.Name = "ButtonDropBD";
+            ButtonDropBD.Size = new Size(119, 23);
+            ButtonDropBD.TabIndex = 1;
+            ButtonDropBD.Text = "Drop BD";
+            ButtonDropBD.UseVisualStyleBackColor = true;
+            ButtonDropBD.Click += ButtonDropDB_Click;
             // 
             // ButtonEditor
             // 
@@ -91,10 +91,10 @@
             Controls.Add(ListViewDBs);
             Controls.Add(ButtonAIS);
             Controls.Add(ButtonEditor);
-            Controls.Add(ButtonRemoveDB);
+            Controls.Add(ButtonDropBD);
             Controls.Add(ButtonAddDB);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            MinimizeBox = false;
+            MdiChildrenMinimizedAnchorBottom = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Database Managment System";
@@ -104,7 +104,7 @@
         #endregion
 
         private Button ButtonAddDB;
-        private Button ButtonRemoveDB;
+        private Button ButtonDropBD;
         private Button ButtonEditor;
         private Button ButtonAIS;
         private ListView ListViewDBs;

@@ -31,7 +31,7 @@ namespace DBMS
 
         void ButtonAddDB_Click(object sender, EventArgs e)
         {
-            var dbn = new DBNameForm(DBsFolder);
+            var dbn = new DBCreateNameForm(DBsFolder);
             dbn.Show();
             dbn.FormClosed += Dbn_FormClosed;
         }
@@ -41,7 +41,7 @@ namespace DBMS
             RefreshListView();
         }
 
-        private void ButtonRemoveDB_Click(object sender, EventArgs e)
+        void ButtonDropDB_Click(object sender, EventArgs e)
         {
             if (ListViewDBs.SelectedItems.Count != 0)
             {
@@ -58,7 +58,6 @@ namespace DBMS
                     for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
                     {
                         var si = ListViewDBs.SelectedItems[i];
-
                         File.Delete($"{DBsFolder}\\{si.Text}");
                     }
 
@@ -71,7 +70,7 @@ namespace DBMS
         {
             if (ListViewDBs.SelectedItems.Count == 1)
             {
-                var dbe = new DBEditor($"{DBsFolder}\\{ListViewDBs.SelectedItems[0].Text}");
+                var dbe = new DBEditorForm($"{DBsFolder}\\{ListViewDBs.SelectedItems[0].Text}");
                 dbe.Show();
             }
             else

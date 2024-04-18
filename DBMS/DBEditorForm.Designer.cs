@@ -1,6 +1,6 @@
 ﻿namespace DBMS
 {
-    partial class DBEditor
+    partial class DBEditorForm
     {
         /// <summary>
         /// Required designer variable.
@@ -33,8 +33,8 @@
             cTabName = new ColumnHeader();
             cTabType = new ColumnHeader();
             cTabScheme = new ColumnHeader();
-            button1 = new Button();
-            button2 = new Button();
+            ButtonCreateTable = new Button();
+            ButtonDropTable = new Button();
             button3 = new Button();
             ButtonSaQ = new Button();
             SuspendLayout();
@@ -70,23 +70,25 @@
             // 
             cTabScheme.Text = "Scheme";
             // 
-            // button1
+            // ButtonCreateTable
             // 
-            button1.Location = new Point(12, 12);
-            button1.Name = "button1";
-            button1.Size = new Size(117, 30);
-            button1.TabIndex = 2;
-            button1.Text = "Create Table";
-            button1.UseVisualStyleBackColor = true;
+            ButtonCreateTable.Location = new Point(12, 12);
+            ButtonCreateTable.Name = "ButtonCreateTable";
+            ButtonCreateTable.Size = new Size(117, 30);
+            ButtonCreateTable.TabIndex = 2;
+            ButtonCreateTable.Text = "Create Table";
+            ButtonCreateTable.UseVisualStyleBackColor = true;
+            ButtonCreateTable.Click += ButtonCreateTable_Click;
             // 
-            // button2
+            // ButtonDropTable
             // 
-            button2.Location = new Point(135, 12);
-            button2.Name = "button2";
-            button2.Size = new Size(117, 30);
-            button2.TabIndex = 3;
-            button2.Text = "Delete Table";
-            button2.UseVisualStyleBackColor = true;
+            ButtonDropTable.Location = new Point(135, 12);
+            ButtonDropTable.Name = "ButtonDropTable";
+            ButtonDropTable.Size = new Size(117, 30);
+            ButtonDropTable.TabIndex = 3;
+            ButtonDropTable.Text = "Drop Table";
+            ButtonDropTable.UseVisualStyleBackColor = true;
+            ButtonDropTable.Click += ButtonDropTable_Click;
             // 
             // button3
             // 
@@ -106,20 +108,20 @@
             ButtonSaQ.Text = "Save and Quit";
             ButtonSaQ.UseVisualStyleBackColor = true;
             // 
-            // DBEditor
+            // DBEditorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(952, 450);
             Controls.Add(ButtonSaQ);
             Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(ButtonDropTable);
+            Controls.Add(ButtonCreateTable);
             Controls.Add(ListViewTableInfo);
             Controls.Add(ListViewTables);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MinimizeBox = false;
-            Name = "DBEditor";
+            Name = "DBEditorForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Editor";
             ResumeLayout(false);
@@ -130,8 +132,8 @@
         private ListView ListViewTables;
         private ListView ListViewTableInfo;
         private ColumnHeader cTabName;
-        private Button button1;
-        private Button button2;
+        private Button ButtonCreateTable;
+        private Button ButtonDropTable;
         private Button button3;
         private ColumnHeader cTabType;
         private ColumnHeader cTabScheme;
