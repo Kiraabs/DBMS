@@ -105,7 +105,7 @@
             Controls.Add(ListViewTableInfo);
             Controls.Add(ListViewTables);
             FormBorderStyle = FormBorderStyle.FixedDialog;
-            MinimizeBox = false;
+            MaximizeBox = false;
             Name = "DBEditorForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Editor";

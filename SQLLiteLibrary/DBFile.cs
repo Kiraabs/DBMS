@@ -34,7 +34,10 @@ namespace SQLLiteLibrary
 
                 while (ex.Read())
                 {
-                    l.Add(ex.GetString("name"));
+                    if (ex.GetString(0) != "sqlite_sequence")
+                    {
+                        l.Add(ex.GetString("name"));
+                    }
                 }
 
                 Disconnect();
