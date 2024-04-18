@@ -1,4 +1,3 @@
-using System.IO;
 
 namespace DBMS
 {
@@ -72,7 +71,8 @@ namespace DBMS
         {
             if (ListViewDBs.SelectedItems.Count == 1)
             {
-                
+                var dbe = new DBEditor($"{DBsFolder}\\{ListViewDBs.SelectedItems[0].Text}");
+                dbe.Show();
             }
             else
             {

@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
@@ -10,10 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\SQLLiteLibrary\SQLLiteLibrary.csproj" />
   </ItemGroup>
 
 </Project>
