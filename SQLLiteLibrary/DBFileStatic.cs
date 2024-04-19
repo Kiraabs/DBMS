@@ -10,7 +10,7 @@
             {
                 MessageBox.Show
                 (
-                    "DB with entered name already exists!",
+                    "Database with entered name already exists!",
                     "Exists",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
@@ -25,7 +25,7 @@
                 f.Dispose();
                 MessageBox.Show
                 (
-                    "DB successfully created!",
+                    "Database successfully created!",
                     "Success",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
@@ -54,7 +54,7 @@
             {
                 MessageBox.Show
                 (
-                    "DB with entered name doesn't exists!",
+                    "Database with entered name doesn't exists!",
                     "Not exists",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
