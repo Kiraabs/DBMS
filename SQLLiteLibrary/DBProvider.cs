@@ -7,6 +7,7 @@ namespace SQLLiteLibrary
     /// </summary>
     public static class DBProvider
     {
+        static string _path = string.Empty;
         static SQLiteConnection _cnn = null!;
         static SQLiteCommand _cmd = null!;
         static SQLiteDataReader _rdr = null!;
@@ -19,7 +20,8 @@ namespace SQLLiteLibrary
             if (IsEmpty(path))
                 throw new Exception("Connection path was empty!");
 
-            _cnn = new SQLiteConnection(path);
+            _path = $"DataSource={path}";
+            _cnn = new SQLiteConnection(_path);
             return Connect();
         }
 
@@ -29,8 +31,13 @@ namespace SQLLiteLibrary
                 throw new Exception("Connection was not provided!");
 
             Disconnect();
+            _path = string.Empty;
             _cnn.Dispose();
-            _cmd?.Dispose();
+            _cmd.Dispose();
+            _rdr.Dispose();
+            _cnn = null!;
+            _cmd = null!;
+            _rdr = null!;
         }
 
         public static bool ExecuteSimpleCmd(string text)

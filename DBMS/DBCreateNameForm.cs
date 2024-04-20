@@ -16,13 +16,20 @@ namespace DBMS
                 if (DBFile.Create(TextBoxDBName.Text))
                 {
                     TextBoxDBName.Clear();
+                    MessageBox.Show
+                    (
+                        "Database file successfully created!",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
             }
             else
             {
                 MessageBox.Show
                 (
-                    "DB name was empty!",
+                    "Database file name was empty!",
                     "Empty",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning

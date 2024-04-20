@@ -82,6 +82,7 @@
             ListViewDBs.TabIndex = 4;
             ListViewDBs.UseCompatibleStateImageBehavior = false;
             ListViewDBs.View = View.List;
+            ListViewDBs.ItemActivate += ListViewDBs_ItemActivate;
             // 
             // MainForm
             // 
@@ -98,6 +99,7 @@
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Database Managment System";
+            FormClosed += MainForm_FormClosed;
             ResumeLayout(false);
         }
 

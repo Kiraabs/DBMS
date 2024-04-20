@@ -4,24 +4,15 @@ namespace DBMS
 {
     public partial class DBEditorForm : Form
     {
-        readonly DBFile DBActive;
-
-        public DBEditorForm(string pathToDB)
+        public DBEditorForm()
         {
             InitializeComponent();
-
-            if (string.IsNullOrWhiteSpace(pathToDB))
-            {
-                throw new ArgumentNullException(nameof(pathToDB), "Requires path to DB");
-            }
-
-            DBActive = new DBFile(pathToDB);
             ScanDB();
         }
 
         void ScanDB()
         {
-            foreach (var item in DBActive.Tables)
+            foreach (var item in DBFile.Tables)
             {
                 ListViewTables.Items.Add(item);
             }
@@ -35,15 +26,12 @@ namespace DBMS
 
         private void ButtonCreateTable_Click(object sender, EventArgs e)
         {
-            var dbtcn = new DBTableCreateNameForm(DBActive);
+            var dbtcn = new DBTableCreateNameForm();
             dbtcn.Show();
             dbtcn.FormClosed += Dbtcn_FormClosed;
         }
 
-        private void Dbtcn_FormClosed(object? sender, FormClosedEventArgs e)
-        {
-            RefreshListView();
-        }
+        private void Dbtcn_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
 
         private void ButtonDropTable_Click(object sender, EventArgs e)
         {
@@ -64,7 +52,7 @@ namespace DBMS
 
             for (int i = 0; i < ListViewTables.SelectedItems.Count; i++)
             {
-                if (DBActive.DropTable(ListViewTables.SelectedItems[i].Text))
+                if (DBFile.DropTable(ListViewTables.SelectedItems[i].Text))
                     atLsOneDropped = true;
             }
 
@@ -102,9 +90,12 @@ namespace DBMS
             //}
         }
 
-        private void ButtonQuit_Click(object sender, EventArgs e)
+        void ButtonQuit_Click(object sender, EventArgs e) => Close();
+
+        void DBEditorForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Close();
+            if (DBFile.IsOpen)
+                DBFile.Close();
         }
     }
 }

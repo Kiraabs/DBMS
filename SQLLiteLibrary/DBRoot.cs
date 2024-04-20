@@ -13,5 +13,13 @@
             Dir = new(Name);
             if (!Dir.Exists) Dir.Create();
         }
+
+        public static void Localize(ref string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException("Name was empty!");
+
+            name = $@"{Name}\{name}.db";
+        }
     }
 }

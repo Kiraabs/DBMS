@@ -1,38 +1,53 @@
 ﻿using System.Data;
 using System.Data.SQLite;
+using System.Xml.Linq;
 
 namespace SQLLiteLibrary
 {   
     /// <summary>
     /// Represents DB file.
     /// </summary>
-    public partial class DBFile
+    public static class DBFile
     {
-        readonly string _path;
-        public List<string> Tables { get; private set; } = [];
-        
-        public DBFile(string dbFilePath)
+        static string _name = string.Empty;
+        static List<string> _tbls = null!;
+        public static bool IsOpen { get; private set; }
+        public static List<string> Tables 
         {
-            if (string.IsNullOrWhiteSpace(dbFilePath))
-                throw new ArgumentNullException(nameof(dbFilePath), "Requires path to DB!");
+            get
+            {
+                ThrowIfNotOpened("Tables");
+                return _tbls;
+            }
+            private set => _tbls = value;
+        }
 
-            _path = $"Data Source={dbFilePath}";
-            DBProvider.Provide(_path);
+        public static void Open(string name)
+        {
+            InnerOpen(name);
+            ThrowIfNotCreated();
+            Tables = [];
+            DBProvider.Provide(_name);
             ReadWriteTables();
         }
 
-        ~DBFile()
+        public static void Close()
         {
+            InnerClose();
             DBProvider.EndProviding();
+            Tables = null!;
         }
 
-        public bool CreateTable(string name)
+        public static bool Create(string name)
         {
-            if (string.IsNullOrWhiteSpace(name) || TableIsExist(name))
+            ThrowIfEmpty(name);
+            InnerOpen(name);
+
+            if (File.Exists(_name))
             {
                 MessageBox.Show
                 (
-                    "Table name was empty or already exists!",
+                    "Database with entered name already exists!",
                     "Exists",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
@@ -40,30 +55,61 @@ namespace SQLLiteLibrary
                 return false;
             }
 
-            if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
-                return ReadWriteTables();
-
-            return false;
-        }
-
-        public bool DropTable(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name) || !TableIsExist(name))
+            try
+            {
+                File.Create(_name).Dispose();
+                InnerClose();
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show
                 (
-                    "Table name was empty or doesn't exists!",
-                    "Exists",
+                    ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool Drop(string name)
+        {
+            ThrowIfEmpty(name);
+            InnerOpen(name);
+
+            if (!File.Exists(_name))
+            {
+                MessageBox.Show
+                (
+                    "Database with entered name doesn't exists!",
+                    "Not exists",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
                 return false;
             }
 
-            if (DBProvider.ExecuteSimpleCmd($"DROP TABLE {name}"))
-                return ReadWriteTables(true);
+            try
+            {
+                File.Delete(_name);
+                InnerClose();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show
+                (
+                    ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return false;
+            }
 
-            return false;
+            return true;
         }
 
         //public (string[] names, string[] vals) TableScheme(string name)
@@ -100,8 +146,71 @@ namespace SQLLiteLibrary
         //    }
         //}
 
-        bool ReadWriteTables(bool clr = false)
+        public static bool CreateTable(string name)
         {
+            ThrowIfEmpty(name);
+            ThrowIfNotOpened();
+
+            if (TableIsExist(name))
+            {
+                MessageBox.Show
+                (
+                    "Table name was empty or already exists!",
+                    "Exists",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return false;
+            }
+
+            if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
+                return ReadWriteTables();
+
+            return false;
+        }
+
+        public static bool DropTable(string name)
+        {
+            ThrowIfEmpty(name);
+            ThrowIfNotOpened();
+
+            if (!TableIsExist(name))
+            {
+                MessageBox.Show
+                (
+                    "Table name was empty or doesn't exists!",
+                    "Exists",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return false;
+            }
+
+            if (DBProvider.ExecuteSimpleCmd($"DROP TABLE {name}"))
+                return ReadWriteTables(true);
+
+            return false;
+        }
+
+        static void InnerOpen(string name)
+        {
+            ThrowIfOpened();
+            _name = name;
+            DBRoot.Localize(ref _name);
+            IsOpen = true;
+        }
+
+        static void InnerClose()
+        {
+            ThrowIfNotOpened();
+            _name = string.Empty;
+            IsOpen = false;
+        }
+
+        static bool ReadWriteTables(bool clr = false)
+        {
+            ThrowIfNotOpened();
+
             try
             {
                 var rdr = DBProvider.ExecuteReaderCmd("SELECT name FROM sqlite_master WHERE type='table'");
@@ -109,7 +218,7 @@ namespace SQLLiteLibrary
 
                 while (rdr.Read())
                 {
-                    if (!Tables.Contains(rdr.GetString(0)))
+                    if (rdr.GetString(0) != "sqlite_sequence" && !Tables.Contains(rdr.GetString(0)))
                     {
                         Tables.Add(rdr.GetString(0));
                     }
@@ -124,6 +233,27 @@ namespace SQLLiteLibrary
             }
         }
 
-        bool TableIsExist(string name) => Tables.Contains(name);
+        static bool TableIsExist(string name) => Tables.Contains(name);
+
+        static void ThrowIfEmpty(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Name was empty!");
+        }
+        static void ThrowIfNotOpened(object? sender = null)
+        {
+            if (string.IsNullOrWhiteSpace(_name))
+                throw new ArgumentException($"File wasn't opened! Source: {sender?.ToString()}");
+        }
+        static void ThrowIfOpened(object? sender = null)
+        {
+            if (!string.IsNullOrWhiteSpace(_name))
+                throw new ArgumentException($"File already opened! Source: {sender?.ToString()}");
+        }
+        static void ThrowIfNotCreated()
+        {
+            if (!File.Exists(_name))
+                throw new ArgumentException("File wasn't exists!");
+        }
     }
 }

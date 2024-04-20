@@ -110,6 +110,7 @@
             Name = "DBEditorForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Database Editor";
+            FormClosed += DBEditorForm_FormClosed;
             ResumeLayout(false);
         }
 

@@ -4,19 +4,16 @@ namespace DBMS
 {
     public partial class DBTableCreateNameForm : Form
     {
-        readonly DBFile _DBActive;
-
-        public DBTableCreateNameForm(DBFile DBActive)
+        public DBTableCreateNameForm()
         {
             InitializeComponent();
-            _DBActive = DBActive;
         }
 
         private void ButtonCreate_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrWhiteSpace(TextBoxTableName.Text))
             {
-                if (_DBActive.CreateTable(TextBoxTableName.Text))
+                if (DBFile.CreateTable(TextBoxTableName.Text))
                 {
                     MessageBox.Show
                     (
