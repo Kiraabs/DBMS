@@ -1,4 +1,4 @@
-﻿using SQLLiteLibrary;
+﻿using SQLiteLibrary;
 
 namespace DBMS
 {

@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace SQLLiteLibrary
+namespace SQLiteLibrary
 {
     /// <summary>
     /// Provides connection and executes cmd's to DB file.
@@ -28,7 +28,7 @@ namespace SQLLiteLibrary
         public static void EndProviding()
         {
             if (NotProvided())
-                throw new Exception("Connection was not provided!");
+                throw new Exception("Connection wasn't provided!");
 
             Disconnect();
             _path = string.Empty;

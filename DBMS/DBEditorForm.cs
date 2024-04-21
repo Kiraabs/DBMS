@@ -1,4 +1,4 @@
-﻿using SQLLiteLibrary;
+﻿using SQLiteLibrary;
 
 namespace DBMS
 {
@@ -24,23 +24,30 @@ namespace DBMS
             ScanDB();
         }
 
-        private void ButtonCreateTable_Click(object sender, EventArgs e)
+        void ButtonCreateTable_Click(object sender, EventArgs e)
         {
             var dbtcn = new DBTableCreateNameForm();
             dbtcn.Show();
             dbtcn.FormClosed += Dbtcn_FormClosed;
         }
 
-        private void Dbtcn_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
-
-        private void ButtonDropTable_Click(object sender, EventArgs e)
+        void ButtonDropTable_Click(object sender, EventArgs e)
         {
             if (ListViewTables.SelectedItems.Count == 0)
+            {
+                MessageBox.Show
+                (
+                    $"Please, select at least one table to drop!",
+                    "Not selected",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
                 return;
+            }
 
             var mbr = MessageBox.Show
             (
-                $"Are you sure about to drop: {ListViewTables.SelectedItems.Count} table (-s)?",
+                $"Are you sure about to drop: {ListViewTables.SelectedItems.Count} table(-s)?",
                 "Confirmation",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Question
@@ -61,13 +68,30 @@ namespace DBMS
                 RefreshListView();
                 MessageBox.Show
                 (
-                    "Selected table (-s) was successfully dropped!",
+                    "Selected table(-s) was successfully dropped!",
                     "Success",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
             }
         }
+
+        void ButtonModifyTable_Click(object sender, EventArgs e)
+        {
+            if (ListViewTables.SelectedItems.Count == 0)
+            {
+                MessageBox.Show
+                (
+                    "You have no or several selected table(-s). Please, select only one!",
+                    "Selection warning",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+        }
+
+        void Dbtcn_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
 
         private void ListViewTables_SelectedIndexChanged(object sender, EventArgs e)
         {

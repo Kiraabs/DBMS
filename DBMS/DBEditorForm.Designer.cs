@@ -32,7 +32,7 @@
             ListViewTableInfo = new ListView();
             ButtonCreateTable = new Button();
             ButtonDropTable = new Button();
-            button3 = new Button();
+            ButtonModifyTable = new Button();
             ButtonQuit = new Button();
             SuspendLayout();
             // 
@@ -77,12 +77,13 @@
             // 
             // button3
             // 
-            button3.Location = new Point(258, 12);
-            button3.Name = "button3";
-            button3.Size = new Size(117, 30);
-            button3.TabIndex = 4;
-            button3.Text = "Modife Table";
-            button3.UseVisualStyleBackColor = true;
+            ButtonModifyTable.Location = new Point(258, 12);
+            ButtonModifyTable.Name = "ButtonModifyTable";
+            ButtonModifyTable.Size = new Size(117, 30);
+            ButtonModifyTable.TabIndex = 4;
+            ButtonModifyTable.Text = "Modife Table";
+            ButtonModifyTable.UseVisualStyleBackColor = true;
+            ButtonModifyTable.Click += ButtonModifyTable_Click;
             // 
             // ButtonQuit
             // 
@@ -100,7 +101,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(952, 450);
             Controls.Add(ButtonQuit);
-            Controls.Add(button3);
+            Controls.Add(ButtonModifyTable);
             Controls.Add(ButtonDropTable);
             Controls.Add(ButtonCreateTable);
             Controls.Add(ListViewTableInfo);
@@ -120,7 +121,7 @@
         private ListView ListViewTableInfo;
         private Button ButtonCreateTable;
         private Button ButtonDropTable;
-        private Button button3;
+        private Button ButtonModifyTable;
         private Button ButtonQuit;
     }
 }

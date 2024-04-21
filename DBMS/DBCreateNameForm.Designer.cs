@@ -49,7 +49,7 @@
             ButtonCreate.UseVisualStyleBackColor = true;
             ButtonCreate.Click += ButtonCreate_Click;
             // 
-            // DBCreateNameForm
+            // DBCreateForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -58,9 +58,9 @@
             Controls.Add(TextBoxDBName);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
-            Name = "DBCreateNameForm";
+            Name = "DBCreateForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Database Create";
+            Text = "Enter database file name";
             ResumeLayout(false);
             PerformLayout();
         }

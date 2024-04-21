@@ -1,9 +1,5 @@
-﻿using System.Data;
-using System.Data.SQLite;
-using System.Xml.Linq;
-
-namespace SQLLiteLibrary
-{   
+﻿namespace SQLiteLibrary
+{
     /// <summary>
     /// Represents DB file.
     /// </summary>
@@ -207,14 +203,15 @@ namespace SQLLiteLibrary
             IsOpen = false;
         }
 
-        static bool ReadWriteTables(bool clr = false)
+        static bool ReadWriteTables(bool clear = false)
         {
             ThrowIfNotOpened();
 
             try
             {
                 var rdr = DBProvider.ExecuteReaderCmd("SELECT name FROM sqlite_master WHERE type='table'");
-                if (clr) Tables.Clear();
+                if (clear) 
+                    Tables.Clear();
 
                 while (rdr.Read())
                 {
@@ -240,16 +237,19 @@ namespace SQLLiteLibrary
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Name was empty!");
         }
+
         static void ThrowIfNotOpened(object? sender = null)
         {
             if (string.IsNullOrWhiteSpace(_name))
                 throw new ArgumentException($"File wasn't opened! Source: {sender?.ToString()}");
         }
+
         static void ThrowIfOpened(object? sender = null)
         {
             if (!string.IsNullOrWhiteSpace(_name))
                 throw new ArgumentException($"File already opened! Source: {sender?.ToString()}");
         }
+
         static void ThrowIfNotCreated()
         {
             if (!File.Exists(_name))

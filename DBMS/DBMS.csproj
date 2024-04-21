@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SQLLiteLibrary\SQLLiteLibrary.csproj" />
+    <ProjectReference Include="..\SQLLiteLibrary\SQLiteLibrary.csproj" />
   </ItemGroup>
 
 </Project>

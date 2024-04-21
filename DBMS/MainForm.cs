@@ -1,4 +1,4 @@
-using SQLLiteLibrary;
+using SQLiteLibrary;
 
 namespace DBMS
 {
@@ -10,7 +10,12 @@ namespace DBMS
             ScanDBFold();
         }
 
-        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
+        void ButtonCreateDB_Click(object sender, EventArgs e)
+        {
+            var dbc = new DBCreateForm();
+            dbc.ShowDialog();
+            dbc.FormClosed += Dbc_FormClosed;
+        }
 
         void ButtonDropDB_Click(object sender, EventArgs e)
         {
@@ -18,7 +23,7 @@ namespace DBMS
             {
                 MessageBox.Show
                 (
-                    "Please, select at least one or several DB (-s) to drop!",
+                    "Please, select at least one or several database file(-s) to drop!",
                     "Not selected",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
@@ -28,34 +33,13 @@ namespace DBMS
 
             var mbr = MessageBox.Show
             (
-                $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} DB (-s)?",
+                $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} database file(-s)?",
                 "Confirmation",
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Question
             );
-
             if (mbr == DialogResult.Yes)
-            {
-                bool atLsOneDropped = false;
-
-                for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
-                {
-                    if (DBFile.Drop(ListViewDBs.SelectedItems[i].Text))
-                        atLsOneDropped = true;
-                }
-
-                if (atLsOneDropped)
-                {
-                    RefreshListView();
-                    MessageBox.Show
-                    (
-                        $"Selected DB (-s) was successfully dropped!",
-                        "Success",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                }
-            }
+                TryDropDBFile();
         }
 
         void ButtonEditor_Click(object sender, EventArgs e) => TryOpenDBFile();
@@ -68,14 +52,14 @@ namespace DBMS
                 DBFile.Close();
         }
 
+        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
+
         void ScanDBFold()
         {
             foreach (var fi in DBRoot.Dir.GetFiles())
             {
                 if (fi.Extension.Contains(".db"))
-                {
                     ListViewDBs.Items.Add(fi.Name.Replace(fi.Extension, string.Empty));
-                }
             }
         }
 
@@ -85,28 +69,43 @@ namespace DBMS
             ScanDBFold();
         }
 
-        void ButtonAddDB_Click(object sender, EventArgs e)
-        {
-            var dbc = new DBCreateForm();
-            dbc.Show();
-            dbc.FormClosed += Dbc_FormClosed;
-        }
-
         void TryOpenDBFile()
         {
-            if (ListViewDBs.SelectedItems.Count == 1)
-            {
-                DBFile.Open(ListViewDBs.SelectedItems[0].Text);
-                var _ = new DBEditorForm().ShowDialog();
-            }
-            else
+            if (ListViewDBs.SelectedItems.Count != 1)
             {
                 MessageBox.Show
                 (
-                    "You have no or several selected DB (-s). Please, select only one DB!",
+                    "You have no or several selected database file(-s). Please, select only one!",
                     "Selection warning",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            DBFile.Open(ListViewDBs.SelectedItems[0].Text);
+            _ = new DBEditorForm().ShowDialog();
+        }
+
+        void TryDropDBFile()
+        {
+            bool oneDropped = false;
+
+            for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
+            {
+                if (DBFile.Drop(ListViewDBs.SelectedItems[i].Text))
+                    oneDropped = true;
+            }
+
+            if (oneDropped)
+            {
+                RefreshListView();
+                MessageBox.Show
+                (
+                    $"Selected database file(-s) was successfully dropped!",
+                    "Success",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
                 );
             }
         }

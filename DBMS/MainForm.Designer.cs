@@ -41,9 +41,9 @@
             ButtonAddDB.Name = "ButtonAddDB";
             ButtonAddDB.Size = new Size(119, 23);
             ButtonAddDB.TabIndex = 0;
-            ButtonAddDB.Text = "Add DB";
+            ButtonAddDB.Text = "Create database file";
             ButtonAddDB.UseVisualStyleBackColor = true;
-            ButtonAddDB.Click += ButtonAddDB_Click;
+            ButtonAddDB.Click += ButtonCreateDB_Click;
             // 
             // ButtonDropBD
             // 
@@ -51,7 +51,7 @@
             ButtonDropBD.Name = "ButtonDropBD";
             ButtonDropBD.Size = new Size(119, 23);
             ButtonDropBD.TabIndex = 1;
-            ButtonDropBD.Text = "Drop BD";
+            ButtonDropBD.Text = "Drop database file";
             ButtonDropBD.UseVisualStyleBackColor = true;
             ButtonDropBD.Click += ButtonDropDB_Click;
             // 

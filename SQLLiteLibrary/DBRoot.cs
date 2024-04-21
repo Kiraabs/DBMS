@@ -1,4 +1,4 @@
-﻿namespace SQLLiteLibrary
+﻿namespace SQLiteLibrary
 {
     /// <summary>
     /// Represents root directory of DB files.
@@ -11,7 +11,8 @@
         static DBRoot()
         {
             Dir = new(Name);
-            if (!Dir.Exists) Dir.Create();
+            if (!Dir.Exists) 
+                Dir.Create();
         }
 
         public static void Localize(ref string name)

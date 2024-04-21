@@ -1,4 +1,4 @@
-﻿using SQLLiteLibrary;
+﻿using SQLiteLibrary;
 
 namespace DBMS
 {
@@ -13,6 +13,9 @@ namespace DBMS
         {
             if (!string.IsNullOrWhiteSpace(TextBoxDBName.Text))
             {
+                if (TextBoxDBName.Text.Contains(".db"))
+                    TextBoxDBName.Text = TextBoxDBName.Text.Replace(".db", string.Empty);
+
                 if (DBFile.Create(TextBoxDBName.Text))
                 {
                     TextBoxDBName.Clear();
