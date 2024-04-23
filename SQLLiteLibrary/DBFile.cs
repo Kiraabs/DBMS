@@ -1,4 +1,7 @@
-﻿namespace SQLiteLibrary
+﻿using System.Collections.ObjectModel;
+using System.Data.Common;
+
+namespace DBMS.ClassLibrary
 {
     /// <summary>
     /// Represents DB file.
@@ -6,13 +9,14 @@
     public static class DBFile
     {
         static string _name = string.Empty;
-        static List<string> _tbls = null!;
+        static List<DBTable> _tbls = null!;
+
         public static bool IsOpen { get; private set; }
-        public static List<string> Tables 
+        public static List<DBTable> Tables 
         {
             get
             {
-                ThrowIfNotOpened("Tables");
+                ThrowIfNotOpened("Names");
                 return _tbls;
             }
             private set => _tbls = value;
@@ -20,16 +24,16 @@
 
         public static void Open(string name)
         {
-            InnerOpen(name);
+            InternalOpen(name);
             ThrowIfNotCreated();
             Tables = [];
             DBProvider.Provide(_name);
-            ReadWriteTables();
+            NamesRead();
         }
 
         public static void Close()
         {
-            InnerClose();
+            InternalClose();
             DBProvider.EndProviding();
             Tables = null!;
         }
@@ -37,34 +41,50 @@
         public static bool Create(string name)
         {
             ThrowIfEmpty(name);
-            InnerOpen(name);
+            InternalOpen(name);
 
             if (File.Exists(_name))
             {
-                MessageBox.Show
-                (
-                    "Database with entered name already exists!",
-                    "Exists",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+                AlreadyExistsMSG();
                 return false;
             }
 
             try
             {
                 File.Create(_name).Dispose();
-                InnerClose();
+                InternalClose();
             }
             catch (Exception ex)
             {
-                MessageBox.Show
-                (
-                    ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                ErrMSG(ex.Message);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool MoveExternal(FileInfo external)
+        {
+            if (external == null)
+                throw new ArgumentException("External file was null!");
+
+            ThrowIfEmpty(external.Name);
+            InternalOpen(external.Name);
+
+            if (File.Exists(_name))
+            {
+                AlreadyExistsMSG();
+                return false;
+            }
+
+            try
+            {
+                File.Move(external.FullName, _name); 
+                InternalClose();
+            }
+            catch (Exception ex)
+            {
+                ErrMSG(ex.Message);
                 return false;
             }
 
@@ -74,7 +94,7 @@
         public static bool Drop(string name)
         {
             ThrowIfEmpty(name);
-            InnerOpen(name);
+            InternalOpen(name);
 
             if (!File.Exists(_name))
             {
@@ -91,61 +111,21 @@
             try
             {
                 File.Delete(_name);
-                InnerClose();
+                InternalClose();
             }
             catch (Exception ex)
             {
-                MessageBox.Show
-                (
-                    ex.Message,
-                    "Error",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
-                );
+                ErrMSG(ex.Message);
                 return false;
             }
 
             return true;
         }
 
-        //public (string[] names, string[] vals) TableScheme(string name)
-        //{
-        //    try
-        //    {
-        //        if (!string.IsNullOrWhiteSpace(name))
-        //        {
-        //            Connect();
-        //            var sqlc = new SQLiteCommand($"PRAGMA table_info('{name}')", _cnn);
-        //            var ex = sqlc.ExecuteReader();
-        //            var names = new string[ex.FieldCount];
-        //            var vals = new string[ex.FieldCount];
-
-        //            while (ex.Read())
-        //            {
-        //                for (int i = 0; i < ex.FieldCount; i++)
-        //                {
-        //                    names[i] = ex.GetName(i);
-        //                    vals[i] = ex.GetValue(i).ToString()!;
-        //                }
-        //            }
-
-        //            Disconnect();
-        //            return (names, vals);
-        //        }
-
-        //        return (null!, null!);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        //        throw;
-        //    }
-        //}
-
         public static bool CreateTable(string name)
         {
-            ThrowIfEmpty(name);
             ThrowIfNotOpened();
+            ThrowIfEmpty(name);
 
             if (TableIsExist(name))
             {
@@ -159,16 +139,16 @@
                 return false;
             }
 
-            if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
-                return ReadWriteTables();
+            if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE '{name}' (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
+                return NamesRead();
 
             return false;
         }
 
         public static bool DropTable(string name)
         {
-            ThrowIfEmpty(name);
             ThrowIfNotOpened();
+            ThrowIfEmpty(name);
 
             if (!TableIsExist(name))
             {
@@ -183,12 +163,22 @@
             }
 
             if (DBProvider.ExecuteSimpleCmd($"DROP TABLE {name}"))
-                return ReadWriteTables(true);
+                return NamesRead(true);
 
             return false;
         }
 
-        static void InnerOpen(string name)
+        public static DBTable GetTable(string name)
+        {
+            ThrowIfNotOpened();
+            ThrowIfEmpty(name);
+            if (TableIsExist(name))
+                return Tables.Where(i => i.Name == name).FirstOrDefault()!;
+
+            return null!;
+        }
+
+        static void InternalOpen(string name)
         {
             ThrowIfOpened();
             _name = name;
@@ -196,14 +186,14 @@
             IsOpen = true;
         }
 
-        static void InnerClose()
+        static void InternalClose()
         {
             ThrowIfNotOpened();
             _name = string.Empty;
             IsOpen = false;
         }
 
-        static bool ReadWriteTables(bool clear = false)
+        static bool NamesRead(bool clear = false)
         {
             ThrowIfNotOpened();
 
@@ -214,23 +204,41 @@
                     Tables.Clear();
 
                 while (rdr.Read())
-                {
-                    if (rdr.GetString(0) != "sqlite_sequence" && !Tables.Contains(rdr.GetString(0)))
-                    {
-                        Tables.Add(rdr.GetString(0));
-                    }
-                }
+                    if (rdr.GetString(0) != "sqlite_sequence" && !TableIsExist(rdr.GetString(0)))
+                        Tables.Add(new DBTable(rdr.GetString(0)));
 
                 return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ErrMSG(ex.Message);
                 return false;
             }
         }
 
-        static bool TableIsExist(string name) => Tables.Contains(name);
+        static void AlreadyExistsMSG()
+        {
+            MessageBox.Show
+            (
+                "Database with entered name already exists!",
+                "Exists",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+        }
+
+        static void ErrMSG(string msg)
+        {
+            MessageBox.Show
+            (
+                msg, 
+                "Error", 
+                MessageBoxButtons.OK, 
+                MessageBoxIcon.Error
+            );
+        }
+
+        static bool TableIsExist(string name) => Tables.Any(i => i.Name == name);
 
         static void ThrowIfEmpty(string name)
         {

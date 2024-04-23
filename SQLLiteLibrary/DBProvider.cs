@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace SQLiteLibrary
+namespace DBMS.ClassLibrary
 {
     /// <summary>
     /// Provides connection and executes cmd's to DB file.

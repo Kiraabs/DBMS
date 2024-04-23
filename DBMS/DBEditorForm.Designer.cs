@@ -30,6 +30,12 @@
         {
             ListViewTables = new ListView();
             ListViewTableInfo = new ListView();
+            CID = new ColumnHeader();
+            CName = new ColumnHeader();
+            CType = new ColumnHeader();
+            CNN = new ColumnHeader();
+            CDltVal = new ColumnHeader();
+            CPK = new ColumnHeader();
             ButtonCreateTable = new Button();
             ButtonDropTable = new Button();
             ButtonModifyTable = new Button();
@@ -48,12 +54,37 @@
             // 
             // ListViewTableInfo
             // 
+            ListViewTableInfo.Columns.AddRange(new ColumnHeader[] { CID, CName, CType, CNN, CDltVal, CPK });
             ListViewTableInfo.Location = new Point(504, 12);
             ListViewTableInfo.Name = "ListViewTableInfo";
             ListViewTableInfo.Size = new Size(436, 426);
             ListViewTableInfo.TabIndex = 1;
             ListViewTableInfo.UseCompatibleStateImageBehavior = false;
             ListViewTableInfo.View = View.Details;
+            // 
+            // CID
+            // 
+            CID.Text = "ID";
+            // 
+            // CName
+            // 
+            CName.Text = "Name";
+            // 
+            // CType
+            // 
+            CType.Text = "Type";
+            // 
+            // CNN
+            // 
+            CNN.Text = "Not Null";
+            // 
+            // CDltVal
+            // 
+            CDltVal.Text = "Default Value";
+            // 
+            // CPK
+            // 
+            CPK.Text = "Auto Increment";
             // 
             // ButtonCreateTable
             // 
@@ -75,7 +106,7 @@
             ButtonDropTable.UseVisualStyleBackColor = true;
             ButtonDropTable.Click += ButtonDropTable_Click;
             // 
-            // button3
+            // ButtonModifyTable
             // 
             ButtonModifyTable.Location = new Point(258, 12);
             ButtonModifyTable.Name = "ButtonModifyTable";
@@ -123,5 +154,11 @@
         private Button ButtonDropTable;
         private Button ButtonModifyTable;
         private Button ButtonQuit;
+        private ColumnHeader CID;
+        private ColumnHeader CName;
+        private ColumnHeader CType;
+        private ColumnHeader CNN;
+        private ColumnHeader CDltVal;
+        private ColumnHeader CPK;
     }
 }

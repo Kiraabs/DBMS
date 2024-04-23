@@ -1,4 +1,4 @@
-﻿using SQLiteLibrary;
+﻿using DBMS.ClassLibrary;
 
 namespace DBMS
 {
@@ -11,18 +11,27 @@ namespace DBMS
 
         private void ButtonCreate_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TextBoxTableName.Text))
+            if (string.IsNullOrWhiteSpace(TextBoxTableName.Text))
             {
-                if (DBFile.CreateTable(TextBoxTableName.Text))
-                {
-                    MessageBox.Show
-                    (
-                        "Table successfully created", 
-                        "Success", 
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                }
+                MessageBox.Show
+                (
+                    "Please, enter the table name!",
+                    "Empty",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            if (DBFile.CreateTable(TextBoxTableName.Text))
+            {
+                MessageBox.Show
+                (
+                    "Table successfully created",
+                    "Success",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
             }
         }
     }

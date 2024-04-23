@@ -33,15 +33,16 @@
             ButtonEditor = new Button();
             ButtonAIS = new Button();
             ListViewDBs = new ListView();
+            ButtonOpenDB = new Button();
             SuspendLayout();
             // 
             // ButtonAddDB
             // 
             ButtonAddDB.Location = new Point(12, 253);
             ButtonAddDB.Name = "ButtonAddDB";
-            ButtonAddDB.Size = new Size(119, 23);
+            ButtonAddDB.Size = new Size(132, 23);
             ButtonAddDB.TabIndex = 0;
-            ButtonAddDB.Text = "Create database file";
+            ButtonAddDB.Text = "Create Database File";
             ButtonAddDB.UseVisualStyleBackColor = true;
             ButtonAddDB.Click += ButtonCreateDB_Click;
             // 
@@ -49,9 +50,9 @@
             // 
             ButtonDropBD.Location = new Point(12, 282);
             ButtonDropBD.Name = "ButtonDropBD";
-            ButtonDropBD.Size = new Size(119, 23);
+            ButtonDropBD.Size = new Size(132, 23);
             ButtonDropBD.TabIndex = 1;
-            ButtonDropBD.Text = "Drop database file";
+            ButtonDropBD.Text = "Drop Database File";
             ButtonDropBD.UseVisualStyleBackColor = true;
             ButtonDropBD.Click += ButtonDropDB_Click;
             // 
@@ -84,11 +85,22 @@
             ListViewDBs.View = View.List;
             ListViewDBs.ItemActivate += ListViewDBs_ItemActivate;
             // 
+            // ButtonOpenDB
+            // 
+            ButtonOpenDB.Location = new Point(150, 253);
+            ButtonOpenDB.Name = "ButtonOpenDB";
+            ButtonOpenDB.Size = new Size(167, 23);
+            ButtonOpenDB.TabIndex = 5;
+            ButtonOpenDB.Text = "Add Foreign Database File";
+            ButtonOpenDB.UseVisualStyleBackColor = true;
+            ButtonOpenDB.Click += ButtonAddForeignDB_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(473, 317);
+            Controls.Add(ButtonOpenDB);
             Controls.Add(ListViewDBs);
             Controls.Add(ButtonAIS);
             Controls.Add(ButtonEditor);
@@ -110,5 +122,6 @@
         private Button ButtonEditor;
         private Button ButtonAIS;
         private ListView ListViewDBs;
+        private Button ButtonOpenDB;
     }
 }

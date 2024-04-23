@@ -5,7 +5,7 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMS", "DBMS\DBMS.csproj", "{56A81B71-4FFD-4F49-9DFB-43ABFD9D98D1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLiteLibrary", "SQLLiteLibrary\SQLiteLibrary.csproj", "{9FEB60D7-818F-4EA2-A40B-8538616A4754}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DBMS.ClassLibrary", "SQLLiteLibrary\DBMS.ClassLibrary.csproj", "{9FEB60D7-818F-4EA2-A40B-8538616A4754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

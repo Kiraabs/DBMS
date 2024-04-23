@@ -1,4 +1,4 @@
-﻿using SQLiteLibrary;
+﻿using DBMS.ClassLibrary;
 
 namespace DBMS
 {
@@ -14,7 +14,7 @@ namespace DBMS
         {
             foreach (var item in DBFile.Tables)
             {
-                ListViewTables.Items.Add(item);
+                ListViewTables.Items.Add(item.Name);
             }
         }
 
@@ -95,23 +95,11 @@ namespace DBMS
 
         private void ListViewTables_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //if (ListViewTables.SelectedItems.Count == 1)
-            //{
-            //    ListViewTableInfo.Columns.Clear();
-            //    ListViewTableInfo.Items.Clear();
-            //    var (names, vals) = DBActive.TableScheme(ListViewTables.SelectedItems[0].Text);
-
-            //    for (int i = 0; i < names.Length; i++)
-            //    {
-            //        var colH = new ColumnHeader()
-            //        {
-            //            Text = names[i],
-            //        };
-            //        ListViewTableInfo.Columns.Add(colH);
-            //    }
-
-            //    ListViewTableInfo.Items.Add(new ListViewItem(vals));
-            //}
+            if (ListViewTables.SelectedItems.Count == 1)
+            {
+                ListViewTableInfo.Items.Clear();
+                ListViewTableInfo.TableToView(ListViewTables.SelectedItems[0].Text);
+            }
         }
 
         void ButtonQuit_Click(object sender, EventArgs e) => Close();

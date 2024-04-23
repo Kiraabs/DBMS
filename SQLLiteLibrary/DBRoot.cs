@@ -1,4 +1,4 @@
-﻿namespace SQLiteLibrary
+﻿namespace DBMS.ClassLibrary
 {
     /// <summary>
     /// Represents root directory of DB files.
@@ -20,7 +20,9 @@
             if (string.IsNullOrEmpty(name))
                 throw new ArgumentException("Name was empty!");
 
-            name = $@"{Name}\{name}.db";
+            name = $@"{Name}\{name}";
+            if (!name.Contains(".db"))
+                name += ".db";
         }
     }
 }

@@ -1,4 +1,4 @@
-using SQLiteLibrary;
+using DBMS.ClassLibrary;
 
 namespace DBMS
 {
@@ -107,6 +107,37 @@ namespace DBMS
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
+            }
+        }
+
+        private void ButtonAddForeignDB_Click(object sender, EventArgs e)
+        {
+            var mbr = MessageBox.Show
+            (
+                "External database file will be permanently moved to program root directory. Are you sure?",
+                "Confirmation",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question
+            );
+
+            if (mbr != DialogResult.Yes)
+                return;
+
+            var ofd = new OpenFileDialog() { Filter = "(*.db)|*.db" };
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                if (DBFile.MoveExternal(new FileInfo(ofd.FileName)))
+                {
+                    RefreshListView();
+                    MessageBox.Show
+                    (
+                        "External database file successfully added!",
+                        "Success",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
             }
         }
     }
