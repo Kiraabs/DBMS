@@ -17,9 +17,7 @@
 
         public static void Localize(ref string name)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentException("Name was empty!");
-
+            DBException.ThrowIfStringIsEmpty(name, "Name was empty!");
             name = $@"{Name}\{name}";
             if (!name.Contains(".db"))
                 name += ".db";

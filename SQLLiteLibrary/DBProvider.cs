@@ -14,12 +14,8 @@ namespace DBMS.ClassLibrary
 
         public static bool Provide(string path)
         {
-            if (!NotProvided())
-                throw new Exception("Connection is already provided!");
-
-            if (IsEmpty(path))
-                throw new Exception("Connection path was empty!");
-
+            DBException.ThrowIfConnectionIsProvided(IsProvided());
+            DBException.ThrowIfStringIsEmpty(path, "Path to database file was empty!");
             _path = $"DataSource={path}";
             _cnn = new SQLiteConnection(_path);
             return Connect();
@@ -27,9 +23,7 @@ namespace DBMS.ClassLibrary
 
         public static void EndProviding()
         {
-            if (NotProvided())
-                throw new Exception("Connection wasn't provided!");
-
+            DBException.ThrowIfConnectionIsNotProvided(!IsProvided());
             Disconnect();
             _path = string.Empty;
             _cnn.Dispose();
@@ -50,7 +44,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMessage(ex);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
         }
@@ -65,19 +59,15 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMessage(ex);
+                DBException.ErrMSG(ex.Message);
                 throw;
             }
         }
 
         static void WriteCmd(string text)
         {
-            if (IsEmpty(text))
-                throw new Exception("Command text was empty!");
-
-            if (NotProvided())
-                throw new Exception("Connection was not provided!");
-
+            DBException.ThrowIfStringIsEmpty(text, "Command text was empty!");
+            DBException.ThrowIfConnectionIsNotProvided(!IsProvided());
             _cmd = new SQLiteCommand(text, _cnn);
         }
 
@@ -90,7 +80,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMessage(ex);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
         }
@@ -104,17 +94,11 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMessage(ex);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
         }
 
-        static void ErrMessage(Exception ex)
-        {
-            MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        static bool IsEmpty(string text) => string.IsNullOrEmpty(text);
-        static bool NotProvided() => _cnn == null;
+        static bool IsProvided() => _cnn == null;
     }
 }

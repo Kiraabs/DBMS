@@ -10,50 +10,6 @@ namespace DBMS
             ScanDBFold();
         }
 
-        void ButtonCreateDB_Click(object sender, EventArgs e)
-        {
-            var dbc = new DBCreateForm();
-            dbc.ShowDialog();
-            dbc.FormClosed += Dbc_FormClosed;
-        }
-
-        void ButtonDropDB_Click(object sender, EventArgs e)
-        {
-            if (ListViewDBs.SelectedItems.Count == 0)
-            {
-                MessageBox.Show
-                (
-                    "Please, select at least one or several database file(-s) to drop!",
-                    "Not selected",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                return;
-            }
-
-            var mbr = MessageBox.Show
-            (
-                $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} database file(-s)?",
-                "Confirmation",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question
-            );
-            if (mbr == DialogResult.Yes)
-                TryDropDBFile();
-        }
-
-        void ButtonEditor_Click(object sender, EventArgs e) => TryOpenDBFile();
-
-        void ListViewDBs_ItemActivate(object sender, EventArgs e) => TryOpenDBFile();
-
-        void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (DBFile.IsOpen)
-                DBFile.Close();
-        }
-
-        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
-
         void ScanDBFold()
         {
             foreach (var fi in DBRoot.Dir.GetFiles())
@@ -110,7 +66,51 @@ namespace DBMS
             }
         }
 
-        private void ButtonAddForeignDB_Click(object sender, EventArgs e)
+        void ButtonCreateDB_Click(object sender, EventArgs e)
+        {
+            var dbc = new DBCreateForm();
+            dbc.FormClosed += Dbc_FormClosed;
+            dbc.ShowDialog();
+        }
+
+        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
+
+        void ButtonDropDB_Click(object sender, EventArgs e)
+        {
+            if (ListViewDBs.SelectedItems.Count == 0)
+            {
+                MessageBox.Show
+                (
+                    "Please, select at least one or several database file(-s) to drop!",
+                    "Not selected",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                );
+                return;
+            }
+
+            var mbr = MessageBox.Show
+            (
+                $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} database file(-s)?",
+                "Confirmation",
+                MessageBoxButtons.YesNoCancel,
+                MessageBoxIcon.Question
+            );
+            if (mbr == DialogResult.Yes)
+                TryDropDBFile();
+        }
+
+        void ButtonEditor_Click(object sender, EventArgs e) => TryOpenDBFile();
+
+        void ListViewDBs_ItemActivate(object sender, EventArgs e) => TryOpenDBFile();
+
+        void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (DBFile.IsOpen)
+                DBFile.Close();
+        }
+
+        void ButtonAddForeignDB_Click(object sender, EventArgs e)
         {
             var mbr = MessageBox.Show
             (

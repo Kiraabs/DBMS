@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using System.Xml.Linq;
 
 namespace DBMS.ClassLibrary
 {
@@ -13,9 +12,7 @@ namespace DBMS.ClassLibrary
 
         public DBTable(string name)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new Exception("Table name was empty!");
-
+            DBException.ThrowIfStringIsEmpty(name, "Table name was empty!");
             _name = name;
             Columns = [];
             ReadColumns();
@@ -24,7 +21,7 @@ namespace DBMS.ClassLibrary
         bool ReadColumns(bool clear = false)
         {
             try
-            {
+            {             
                 var cs = DBProvider.ExecuteReaderCmd($"PRAGMA table_info('{_name}')").GetColumnSchema();
                 if (clear)
                     Columns.Clear();
@@ -37,7 +34,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DBException.ErrMSG(ex.Message);
                 throw;
             }
         }

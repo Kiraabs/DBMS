@@ -1,13 +1,11 @@
-﻿using System.Collections.ObjectModel;
-using System.Data.Common;
-
-namespace DBMS.ClassLibrary
+﻿namespace DBMS.ClassLibrary
 {
     /// <summary>
     /// Represents DB file.
     /// </summary>
     public static class DBFile
     {
+        const string SysTable = "sqlite_sequence";
         static string _name = string.Empty;
         static List<DBTable> _tbls = null!;
 
@@ -16,7 +14,7 @@ namespace DBMS.ClassLibrary
         {
             get
             {
-                ThrowIfNotOpened("Names");
+                DBException.ThrowIfDBFileIsNotOpened("Names");
                 return _tbls;
             }
             private set => _tbls = value;
@@ -25,7 +23,7 @@ namespace DBMS.ClassLibrary
         public static void Open(string name)
         {
             InternalOpen(name);
-            ThrowIfNotCreated();
+            DBException.ThrowIfDBFileNotCreated(name);
             Tables = [];
             DBProvider.Provide(_name);
             NamesRead();
@@ -40,12 +38,13 @@ namespace DBMS.ClassLibrary
 
         public static bool Create(string name)
         {
-            ThrowIfEmpty(name);
+            DBException.ThrowIfStringIsEmpty(name, "Database file name file null or emtpy!");
             InternalOpen(name);
 
             if (File.Exists(_name))
             {
-                AlreadyExistsMSG();
+                DBException.AlreadyExistsMSG();
+                InternalClose();
                 return false;
             }
 
@@ -56,7 +55,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMSG(ex.Message);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
 
@@ -65,15 +64,13 @@ namespace DBMS.ClassLibrary
 
         public static bool MoveExternal(FileInfo external)
         {
-            if (external == null)
-                throw new ArgumentException("External file was null!");
-
-            ThrowIfEmpty(external.Name);
+            DBException.ThrowIfStringIsEmpty(external.Name, "External file name was null or empty!");
             InternalOpen(external.Name);
 
             if (File.Exists(_name))
             {
-                AlreadyExistsMSG();
+                DBException.AlreadyExistsMSG();
+                InternalClose();
                 return false;
             }
 
@@ -84,7 +81,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMSG(ex.Message);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
 
@@ -93,7 +90,7 @@ namespace DBMS.ClassLibrary
 
         public static bool Drop(string name)
         {
-            ThrowIfEmpty(name);
+            DBException.ThrowIfStringIsEmpty(name, "Database file name was null or empty");
             InternalOpen(name);
 
             if (!File.Exists(_name))
@@ -105,6 +102,7 @@ namespace DBMS.ClassLibrary
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Warning
                 );
+                InternalClose();
                 return false;
             }
 
@@ -115,7 +113,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                ErrMSG(ex.Message);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
 
@@ -124,8 +122,8 @@ namespace DBMS.ClassLibrary
 
         public static bool CreateTable(string name)
         {
-            ThrowIfNotOpened();
-            ThrowIfEmpty(name);
+            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
 
             if (TableIsExist(name))
             {
@@ -141,14 +139,13 @@ namespace DBMS.ClassLibrary
 
             if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE '{name}' (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
                 return NamesRead();
-
             return false;
         }
 
         public static bool DropTable(string name)
         {
-            ThrowIfNotOpened();
-            ThrowIfEmpty(name);
+            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty");
 
             if (!TableIsExist(name))
             {
@@ -164,23 +161,21 @@ namespace DBMS.ClassLibrary
 
             if (DBProvider.ExecuteSimpleCmd($"DROP TABLE {name}"))
                 return NamesRead(true);
-
             return false;
         }
 
         public static DBTable GetTable(string name)
         {
-            ThrowIfNotOpened();
-            ThrowIfEmpty(name);
+            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty");
             if (TableIsExist(name))
                 return Tables.Where(i => i.Name == name).FirstOrDefault()!;
-
             return null!;
         }
 
         static void InternalOpen(string name)
         {
-            ThrowIfOpened();
+            DBException.ThrowIfDBFileOpened(name);
             _name = name;
             DBRoot.Localize(ref _name);
             IsOpen = true;
@@ -188,14 +183,14 @@ namespace DBMS.ClassLibrary
 
         static void InternalClose()
         {
-            ThrowIfNotOpened();
+            DBException.ThrowIfDBFileIsNotOpened(_name);
             _name = string.Empty;
             IsOpen = false;
         }
 
         static bool NamesRead(bool clear = false)
         {
-            ThrowIfNotOpened();
+            DBException.ThrowIfDBFileIsNotOpened(_name);
 
             try
             {
@@ -204,64 +199,17 @@ namespace DBMS.ClassLibrary
                     Tables.Clear();
 
                 while (rdr.Read())
-                    if (rdr.GetString(0) != "sqlite_sequence" && !TableIsExist(rdr.GetString(0)))
+                    if (rdr.GetString(0) != SysTable && !TableIsExist(rdr.GetString(0)))
                         Tables.Add(new DBTable(rdr.GetString(0)));
-
                 return true;
             }
             catch (Exception ex)
             {
-                ErrMSG(ex.Message);
+                DBException.ErrMSG(ex.Message);
                 return false;
             }
         }
 
-        static void AlreadyExistsMSG()
-        {
-            MessageBox.Show
-            (
-                "Database with entered name already exists!",
-                "Exists",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning
-            );
-        }
-
-        static void ErrMSG(string msg)
-        {
-            MessageBox.Show
-            (
-                msg, 
-                "Error", 
-                MessageBoxButtons.OK, 
-                MessageBoxIcon.Error
-            );
-        }
-
         static bool TableIsExist(string name) => Tables.Any(i => i.Name == name);
-
-        static void ThrowIfEmpty(string name)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name was empty!");
-        }
-
-        static void ThrowIfNotOpened(object? sender = null)
-        {
-            if (string.IsNullOrWhiteSpace(_name))
-                throw new ArgumentException($"File wasn't opened! Source: {sender?.ToString()}");
-        }
-
-        static void ThrowIfOpened(object? sender = null)
-        {
-            if (!string.IsNullOrWhiteSpace(_name))
-                throw new ArgumentException($"File already opened! Source: {sender?.ToString()}");
-        }
-
-        static void ThrowIfNotCreated()
-        {
-            if (!File.Exists(_name))
-                throw new ArgumentException("File wasn't exists!");
-        }
     }
 }
