@@ -15,12 +15,14 @@
                 Dir.Create();
         }
 
-        public static void Localize(ref string name)
+        public static string Localize(ref string name)
         {
             DBException.ThrowIfStringIsEmpty(name, "Name was empty!");
-            name = $@"{Name}\{name}";
             if (!name.Contains(".db"))
                 name += ".db";
+            var path = $@"{Dir.FullName}\{name}";
+            name = $@"{Name}\{name}";
+            return path;
         }
     }
 }

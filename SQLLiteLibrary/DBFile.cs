@@ -1,4 +1,6 @@
-﻿namespace DBMS.ClassLibrary
+﻿using System.Data;
+
+namespace DBMS.ClassLibrary
 {
     /// <summary>
     /// Represents DB file.
@@ -6,11 +8,11 @@
     public static class DBFile
     {
         const string SysTable = "sqlite_sequence";
-        static string _name = string.Empty;
-        static List<DBTable> _tbls = null!;
+        static string _name = string.Empty, _path = string.Empty;
+        static List<DataTable> _tbls = null!;
 
         public static bool IsOpen { get; private set; }
-        public static List<DBTable> Tables 
+        public static List<DataTable> Tables 
         {
             get
             {
@@ -23,7 +25,7 @@
         public static void Open(string name)
         {
             InternalOpen(name);
-            DBException.ThrowIfDBFileNotCreated(name);
+            DBException.ThrowIfDBFileNotCreated(_path);
             Tables = [];
             DBProvider.Provide(_name);
             NamesRead();
@@ -42,24 +44,21 @@
             InternalOpen(name);
 
             if (File.Exists(_name))
+                DBException.WrMSG("Database with entered name already exists!");
+            else
             {
-                DBException.AlreadyExistsMSG();
-                InternalClose();
-                return false;
+                try
+                {
+                    File.Create(_name).Dispose();
+                    InternalClose();
+                    return true;
+                }
+                catch (Exception ex) 
+                    { DBException.ErrMSG(ex.Message); }
             }
 
-            try
-            {
-                File.Create(_name).Dispose();
-                InternalClose();
-            }
-            catch (Exception ex)
-            {
-                DBException.ErrMSG(ex.Message);
-                return false;
-            }
-
-            return true;
+            InternalClose();
+            return false;
         }
 
         public static bool MoveExternal(FileInfo external)
@@ -68,24 +67,21 @@
             InternalOpen(external.Name);
 
             if (File.Exists(_name))
+                DBException.WrMSG("Database with entered name already exists!");
+            else
             {
-                DBException.AlreadyExistsMSG();
-                InternalClose();
-                return false;
+                try
+                {
+                    File.Move(external.FullName, _name);
+                    InternalClose();
+                    return true;
+                }
+                catch (Exception ex)
+                    { DBException.ErrMSG(ex.Message); }
             }
 
-            try
-            {
-                File.Move(external.FullName, _name); 
-                InternalClose();
-            }
-            catch (Exception ex)
-            {
-                DBException.ErrMSG(ex.Message);
-                return false;
-            }
-
-            return true;
+            InternalClose();
+            return false;
         }
 
         public static bool Drop(string name)
@@ -94,30 +90,21 @@
             InternalOpen(name);
 
             if (!File.Exists(_name))
+                DBException.WrMSG("Database with entered name doesn't exists!");
+            else
             {
-                MessageBox.Show
-                (
-                    "Database with entered name doesn't exists!",
-                    "Not exists",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                InternalClose();
-                return false;
+                try
+                {
+                    File.Delete(_name);
+                    InternalClose();
+                    return true;
+                }
+                catch (Exception ex)
+                    { DBException.ErrMSG(ex.Message); }
             }
 
-            try
-            {
-                File.Delete(_name);
-                InternalClose();
-            }
-            catch (Exception ex)
-            {
-                DBException.ErrMSG(ex.Message);
-                return false;
-            }
-
-            return true;
+            InternalClose();
+            return false;
         }
 
         public static bool CreateTable(string name)
@@ -127,13 +114,7 @@
 
             if (TableIsExist(name))
             {
-                MessageBox.Show
-                (
-                    "Table name was empty or already exists!",
-                    "Exists",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+                DBException.WrMSG("Table name was empty or already exists!");
                 return false;
             }
 
@@ -149,13 +130,7 @@
 
             if (!TableIsExist(name))
             {
-                MessageBox.Show
-                (
-                    "Table name was empty or doesn't exists!",
-                    "Exists",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+                DBException.WrMSG("Table name was empty or doesn't exists!");
                 return false;
             }
 
@@ -164,20 +139,20 @@
             return false;
         }
 
-        public static DBTable GetTable(string name)
+        public static DataTable GetTable(string name)
         {
             DBException.ThrowIfDBFileIsNotOpened(_name);
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty");
             if (TableIsExist(name))
-                return Tables.Where(i => i.Name == name).FirstOrDefault()!;
+                return Tables.Where(i => i.TableName == name).FirstOrDefault()!;
             return null!;
         }
 
         static void InternalOpen(string name)
         {
-            DBException.ThrowIfDBFileOpened(name);
+            DBException.ThrowIfDBFileOpened(_name);
             _name = name;
-            DBRoot.Localize(ref _name);
+            _path = DBRoot.Localize(ref _name);
             IsOpen = true;
         }
 
@@ -200,7 +175,7 @@
 
                 while (rdr.Read())
                     if (rdr.GetString(0) != SysTable && !TableIsExist(rdr.GetString(0)))
-                        Tables.Add(new DBTable(rdr.GetString(0)));
+                        Tables.Add(TableInfo(rdr.GetTableName(0)));
                 return true;
             }
             catch (Exception ex)
@@ -210,6 +185,19 @@
             }
         }
 
-        static bool TableIsExist(string name) => Tables.Any(i => i.Name == name);
+        static DataTable TableInfo(string name, bool clear = false)
+        {
+            try
+            {
+                return DBProvider.ExecuteReaderCmd($"PRAGMA table_info('{name}')").GetSchemaTable();
+            }
+            catch (Exception ex)
+            {
+                DBException.ErrMSG(ex.Message);
+                throw;
+            }
+        }
+
+        static bool TableIsExist(string name) => Tables.Any(i => i.TableName == name);
     }
 }

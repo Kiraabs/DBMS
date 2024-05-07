@@ -1,4 +1,6 @@
-﻿namespace DBMS.ClassLibrary
+﻿using System.Data.SQLite;
+
+namespace DBMS.ClassLibrary
 {
     public static class DBException
     { 
@@ -27,24 +29,24 @@
                 throw new ArgumentException($"File wasn't opened! Source: {sender?.ToString()}");
         }
 
-        public static void ThrowIfConnectionIsProvided(bool isProvided)
+        public static void ThrowIfConnectionIsProvided(SQLiteConnection connection)
         {
-            if (!isProvided)
+            if (connection != null)
                 throw new Exception("Connection is already provided!");
         }
 
-        public static void ThrowIfConnectionIsNotProvided(bool isProvided)
+        public static void ThrowIfConnectionIsNotProvided(SQLiteConnection connection)
         {
-            if (isProvided)
+            if (connection == null)
                 throw new Exception("Connection wasn't provided!");
         }
 
-        public static void AlreadyExistsMSG()
+        public static void WrMSG(string msg)
         {
             MessageBox.Show
             (
-                "Database with entered name already exists!",
-                "Exists",
+                msg,
+                "Warning",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Warning
             );

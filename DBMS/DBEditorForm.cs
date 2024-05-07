@@ -13,9 +13,7 @@ namespace DBMS
         void ScanDB()
         {
             foreach (var item in DBFile.Tables)
-            {
-                ListViewTables.Items.Add(item.Name);
-            }
+                ListViewTables.Items.Add(item.TableName);
         }
 
         void RefreshListView()

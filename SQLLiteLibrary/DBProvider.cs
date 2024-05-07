@@ -14,7 +14,7 @@ namespace DBMS.ClassLibrary
 
         public static bool Provide(string path)
         {
-            DBException.ThrowIfConnectionIsProvided(IsProvided());
+            DBException.ThrowIfConnectionIsProvided(_cnn);
             DBException.ThrowIfStringIsEmpty(path, "Path to database file was empty!");
             _path = $"DataSource={path}";
             _cnn = new SQLiteConnection(_path);
@@ -23,7 +23,7 @@ namespace DBMS.ClassLibrary
 
         public static void EndProviding()
         {
-            DBException.ThrowIfConnectionIsNotProvided(!IsProvided());
+            DBException.ThrowIfConnectionIsNotProvided(_cnn);
             Disconnect();
             _path = string.Empty;
             _cnn.Dispose();
@@ -67,7 +67,7 @@ namespace DBMS.ClassLibrary
         static void WriteCmd(string text)
         {
             DBException.ThrowIfStringIsEmpty(text, "Command text was empty!");
-            DBException.ThrowIfConnectionIsNotProvided(!IsProvided());
+            DBException.ThrowIfConnectionIsNotProvided(_cnn);
             _cmd = new SQLiteCommand(text, _cnn);
         }
 
@@ -98,7 +98,5 @@ namespace DBMS.ClassLibrary
                 return false;
             }
         }
-
-        static bool IsProvided() => _cnn == null;
     }
 }
