@@ -1,4 +1,5 @@
 using DBMS.ClassLibrary;
+using System.Data;
 
 namespace DBMS
 {
@@ -45,7 +46,7 @@ namespace DBMS
 
         void TryDropDBFile()
         {
-            bool oneDropped = false;
+            var oneDropped = false;
 
             for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
             {

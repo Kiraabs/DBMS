@@ -1,20 +1,25 @@
-﻿using System.Data.Common;
+﻿//using System.Data.Common;
 
-namespace DBMS.ClassLibrary
-{
-    public class DBTable
-    {
-        string _name;
-        List<DbColumn> _atrbus = null!;
+//namespace DBMS.ClassLibrary
+//{
+//    public class DBTable
+//    {
+//        string _name;
+//        Dictionary<string, object> _cols;
+//        public string Name { get => _name; private set => _name = value; }
+//        Dictionary<string, object> Columns { get => _cols; private set => _cols = value; }
 
-        public string Name { get => _name; private set => _name = value; }
-        public List<DbColumn> Columns { get => _atrbus; private set => _atrbus = value; }
+//        public DBTable(string name)
+//        {
+//            DBException.ThrowIfStringIsEmpty(name, "Table name was empty!");
+//            _name = name;
+//            Columns = [];
+//            ColsRead()
+//        }
 
-        public DBTable(string name)
-        {
-            DBException.ThrowIfStringIsEmpty(name, "Table name was empty!");
-            _name = name;
-            Columns = [];
-        }
-    }
-}
+//        void ColsRead()
+//        {
+
+//        }
+//    }
+//}

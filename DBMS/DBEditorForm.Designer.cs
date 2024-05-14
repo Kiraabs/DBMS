@@ -84,7 +84,7 @@
             // 
             // CPK
             // 
-            CPK.Text = "Auto Increment";
+            CPK.Text = "Primar Key";
             // 
             // ButtonCreateTable
             // 

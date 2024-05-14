@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Data.Common;
+using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary
 {
@@ -9,10 +11,10 @@ namespace DBMS.ClassLibrary
     {
         const string SysTable = "sqlite_sequence";
         static string _name = string.Empty, _path = string.Empty;
-        static List<DataTable> _tbls = null!;
+        static List<string> _tbls = null!;
 
         public static bool IsOpen { get; private set; }
-        public static List<DataTable> Tables 
+        public static List<string> Tables 
         {
             get
             {
@@ -139,12 +141,12 @@ namespace DBMS.ClassLibrary
             return false;
         }
 
-        public static DataTable GetTable(string name)
+        public static string GetTable(string name)
         {
             DBException.ThrowIfDBFileIsNotOpened(_name);
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty");
             if (TableIsExist(name))
-                return Tables.Where(i => i.TableName == name).FirstOrDefault()!;
+                return Tables.Where(i => i == name).FirstOrDefault()!;
             return null!;
         }
 
@@ -175,7 +177,11 @@ namespace DBMS.ClassLibrary
 
                 while (rdr.Read())
                     if (rdr.GetString(0) != SysTable && !TableIsExist(rdr.GetString(0)))
-                        Tables.Add(TableInfo(rdr.GetTableName(0)));
+                    {
+                        var i = TableInfo(rdr.GetString(0)).GetValues().GetValues(2);
+                        Tables.Add(rdr.GetString(0));
+                        
+                    }
                 return true;
             }
             catch (Exception ex)
@@ -185,11 +191,11 @@ namespace DBMS.ClassLibrary
             }
         }
 
-        static DataTable TableInfo(string name, bool clear = false)
+        static SQLiteDataReader TableInfo(string name)
         {
             try
             {
-                return DBProvider.ExecuteReaderCmd($"PRAGMA table_info('{name}')").GetSchemaTable();
+                return DBProvider.ExecuteReaderCmd($"PRAGMA table_info('{name}')");
             }
             catch (Exception ex)
             {
@@ -198,6 +204,6 @@ namespace DBMS.ClassLibrary
             }
         }
 
-        static bool TableIsExist(string name) => Tables.Any(i => i.TableName == name);
+        static bool TableIsExist(string name) => Tables.Any(i => i == name);
     }
 }
