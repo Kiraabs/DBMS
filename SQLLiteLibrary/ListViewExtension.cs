@@ -9,7 +9,7 @@ namespace DBMS.ClassLibrary
             for (int i = 0; i < view.Columns.Count; i++)
             {
                 var col = view.Columns[i];
-                var lvi = new ListViewItem(new string[] { col.Name});
+                var lvi = new ListViewItem(new string[] { col.Name });
                 view.Items.Add(lvi);
             }
         }

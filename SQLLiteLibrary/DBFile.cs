@@ -1,6 +1,4 @@
 ﻿using System.Data;
-using System.Data.Common;
-using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary
 {
@@ -11,10 +9,10 @@ namespace DBMS.ClassLibrary
     {
         const string SysTable = "sqlite_sequence";
         static string _name = string.Empty, _path = string.Empty;
-        static List<string> _tbls = null!;
+        static List<DBTable> _tbls = null!;
 
         public static bool IsOpen { get; private set; }
-        public static List<string> Tables 
+        public static List<DBTable> Tables 
         {
             get
             {
@@ -29,7 +27,7 @@ namespace DBMS.ClassLibrary
             InternalOpen(name);
             DBException.ThrowIfDBFileNotCreated(_path);
             Tables = [];
-            DBProvider.Provide(_name);
+            DBProvider.Provide(_path);
             NamesRead();
         }
 
@@ -45,13 +43,13 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfStringIsEmpty(name, "Database file name file null or emtpy!");
             InternalOpen(name);
 
-            if (File.Exists(_name))
+            if (File.Exists(_path))
                 DBException.WrMSG("Database with entered name already exists!");
             else
             {
                 try
                 {
-                    File.Create(_name).Dispose();
+                    File.Create(_path).Dispose();
                     InternalClose();
                     return true;
                 }
@@ -68,13 +66,13 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfStringIsEmpty(external.Name, "External file name was null or empty!");
             InternalOpen(external.Name);
 
-            if (File.Exists(_name))
+            if (File.Exists(_path))
                 DBException.WrMSG("Database with entered name already exists!");
             else
             {
                 try
                 {
-                    File.Move(external.FullName, _name);
+                    File.Move(external.FullName, _path);
                     InternalClose();
                     return true;
                 }
@@ -91,13 +89,13 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfStringIsEmpty(name, "Database file name was null or empty");
             InternalOpen(name);
 
-            if (!File.Exists(_name))
+            if (!File.Exists(_path))
                 DBException.WrMSG("Database with entered name doesn't exists!");
             else
             {
                 try
                 {
-                    File.Delete(_name);
+                    File.Delete(_path);
                     InternalClose();
                     return true;
                 }
@@ -111,7 +109,7 @@ namespace DBMS.ClassLibrary
 
         public static bool CreateTable(string name)
         {
-            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfDBFileIsNotOpened(_path);
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
 
             if (TableIsExist(name))
@@ -127,7 +125,7 @@ namespace DBMS.ClassLibrary
 
         public static bool DropTable(string name)
         {
-            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfDBFileIsNotOpened(_path);
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty");
 
             if (!TableIsExist(name))
@@ -136,38 +134,39 @@ namespace DBMS.ClassLibrary
                 return false;
             }
 
-            if (DBProvider.ExecuteSimpleCmd($"DROP TABLE {name}"))
+            if (DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'"))
                 return NamesRead(true);
             return false;
         }
 
-        public static string GetTable(string name)
+        public static DBTable GetTable(string name)
         {
-            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfDBFileIsNotOpened(_path);
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty");
             if (TableIsExist(name))
-                return Tables.Where(i => i == name).FirstOrDefault()!;
+                return Tables.Where(i => i.TableName == name).FirstOrDefault()!;
             return null!;
         }
 
         static void InternalOpen(string name)
         {
-            DBException.ThrowIfDBFileOpened(_name);
+            DBException.ThrowIfDBFileOpened(_path);
             _name = name;
-            _path = DBRoot.Localize(ref _name);
+            _path = DBRoot.Localize(_name);
             IsOpen = true;
         }
 
         static void InternalClose()
         {
-            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfDBFileIsNotOpened(_path);
             _name = string.Empty;
+            _path = string.Empty;
             IsOpen = false;
         }
 
         static bool NamesRead(bool clear = false)
         {
-            DBException.ThrowIfDBFileIsNotOpened(_name);
+            DBException.ThrowIfDBFileIsNotOpened(_path);
 
             try
             {
@@ -177,11 +176,7 @@ namespace DBMS.ClassLibrary
 
                 while (rdr.Read())
                     if (rdr.GetString(0) != SysTable && !TableIsExist(rdr.GetString(0)))
-                    {
-                        var i = TableInfo(rdr.GetString(0)).GetValues().GetValues(2);
-                        Tables.Add(rdr.GetString(0));
-                        
-                    }
+                        Tables.Add(new DBTable(["", _name, rdr.GetString(0)]));
                 return true;
             }
             catch (Exception ex)
@@ -191,19 +186,6 @@ namespace DBMS.ClassLibrary
             }
         }
 
-        static SQLiteDataReader TableInfo(string name)
-        {
-            try
-            {
-                return DBProvider.ExecuteReaderCmd($"PRAGMA table_info('{name}')");
-            }
-            catch (Exception ex)
-            {
-                DBException.ErrMSG(ex.Message);
-                throw;
-            }
-        }
-
-        static bool TableIsExist(string name) => Tables.Any(i => i == name);
+        static bool TableIsExist(string name) => Tables.Any(i => i.TableName == name);
     }
 }

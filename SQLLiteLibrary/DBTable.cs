@@ -1,25 +1,21 @@
-﻿//using System.Data.Common;
+﻿using System.Data.SQLite;
 
-//namespace DBMS.ClassLibrary
-//{
-//    public class DBTable
-//    {
-//        string _name;
-//        Dictionary<string, object> _cols;
-//        public string Name { get => _name; private set => _name = value; }
-//        Dictionary<string, object> Columns { get => _cols; private set => _cols = value; }
+namespace DBMS.ClassLibrary
+{
+    public class DBTable : SQLiteVirtualTable
+    {
+        Dictionary<string, object[]> _atrs = [];
+        public Dictionary<string, object[]> Attributes { get => _atrs; private set => _atrs = value; }
 
-//        public DBTable(string name)
-//        {
-//            DBException.ThrowIfStringIsEmpty(name, "Table name was empty!");
-//            _name = name;
-//            Columns = [];
-//            ColsRead()
-//        }
+        public DBTable(string[] arguments) : base(arguments)
+        {
+            GetAtrs();
+        }
 
-//        void ColsRead()
-//        {
+        void GetAtrs()
+        {
 
-//        }
-//    }
-//}
+        }
+    }
+}
+
