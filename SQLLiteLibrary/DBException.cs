@@ -10,6 +10,12 @@ namespace DBMS.ClassLibrary
                 throw new ArgumentException($"{msg}");
         }
 
+        public static void ThrowIfObjectIsNull(object obj, string msg)
+        {
+            if (obj == null) 
+                throw new ArgumentException($"{msg}");
+        }
+
         public static void ThrowIfDBFileNotCreated(string name)
         {
             ThrowIfStringIsEmpty(name, "Database file name was null or empty!");
@@ -32,13 +38,13 @@ namespace DBMS.ClassLibrary
         public static void ThrowIfConnectionIsProvided(SQLiteConnection connection)
         {
             if (connection != null)
-                throw new Exception("Connection is already provided!");
+                throw new ArgumentException("Connection is already provided!");
         }
 
         public static void ThrowIfConnectionIsNotProvided(SQLiteConnection connection)
         {
             if (connection == null)
-                throw new Exception("Connection wasn't provided!");
+                throw new ArgumentException("Connection wasn't provided!");
         }
 
         public static void WrMSG(string msg)

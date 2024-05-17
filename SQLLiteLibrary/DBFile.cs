@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Xml.Linq;
 
 namespace DBMS.ClassLibrary
 {
@@ -16,7 +17,7 @@ namespace DBMS.ClassLibrary
         {
             get
             {
-                DBException.ThrowIfDBFileIsNotOpened("Names");
+                DBException.ThrowIfDBFileIsNotOpened("Tables");
                 return _tbls;
             }
             private set => _tbls = value;
@@ -147,6 +148,8 @@ namespace DBMS.ClassLibrary
                 return Tables.Where(i => i.TableName == name).FirstOrDefault()!;
             return null!;
         }
+
+
 
         static void InternalOpen(string name)
         {

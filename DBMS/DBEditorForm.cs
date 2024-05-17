@@ -22,11 +22,41 @@ namespace DBMS
             ScanDB();
         }
 
+        void TryDropTable()
+        {
+            var atLsOneDropped = false;
+
+            for (int i = 0; i < ListViewTables.SelectedItems.Count; i++)
+            {
+                if (DBFile.DropTable(ListViewTables.SelectedItems[i].Text))
+                    atLsOneDropped = true;
+            }
+
+            if (atLsOneDropped)
+            {
+                RefreshListView();
+                MessageBox.Show
+                (
+                    "Selected table(-s) was successfully dropped!",
+                    "Success",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+        }
+
+        void OpenTableToModify()
+        {
+            var dbmf = new DBModifierForm(ListViewTables.SelectedItems[0].Text);
+            if (dbmf.ShowDialog() == DialogResult.Cancel)
+                RefreshListView();
+        }
+
         void ButtonCreateTable_Click(object sender, EventArgs e)
         {
-            var dbtcn = new DBTableCreateNameForm();
+            var dbtcn = new DBTableCreateForm();
             dbtcn.Show();
-            dbtcn.FormClosed += Dbtcn_FormClosed;
+            dbtcn.FormClosed += DBForm_Closed;
         }
 
         void ButtonDropTable_Click(object sender, EventArgs e)
@@ -50,33 +80,13 @@ namespace DBMS
                 MessageBoxButtons.YesNoCancel,
                 MessageBoxIcon.Question
             );
-            if (mbr != DialogResult.Yes)
-                return;
-
-            var atLsOneDropped = false;
-
-            for (int i = 0; i < ListViewTables.SelectedItems.Count; i++)
-            {
-                if (DBFile.DropTable(ListViewTables.SelectedItems[i].Text))
-                    atLsOneDropped = true;
-            }
-
-            if (atLsOneDropped)
-            {
-                RefreshListView();
-                MessageBox.Show
-                (
-                    "Selected table(-s) was successfully dropped!",
-                    "Success",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-            }
+            if (mbr == DialogResult.Yes)
+                TryDropTable();
         }
 
         void ButtonModifyTable_Click(object sender, EventArgs e)
         {
-            if (ListViewTables.SelectedItems.Count == 0)
+            if (ListViewTables.SelectedItems.Count != 1)
             {
                 MessageBox.Show
                 (
@@ -87,9 +97,11 @@ namespace DBMS
                 );
                 return;
             }
+
+            OpenTableToModify();
         }
 
-        void Dbtcn_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
+        void DBForm_Closed(object? sender, FormClosedEventArgs e) => RefreshListView();
 
         private void ListViewTables_SelectedIndexChanged(object sender, EventArgs e)
         {

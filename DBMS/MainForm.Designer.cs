@@ -107,6 +107,7 @@
             Controls.Add(ButtonDropBD);
             Controls.Add(ButtonAddDB);
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
             MdiChildrenMinimizedAnchorBottom = false;
             Name = "MainForm";
             StartPosition = FormStartPosition.CenterScreen;

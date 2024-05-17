@@ -1,6 +1,6 @@
 ﻿namespace DBMS
 {
-    partial class DBTableCreateNameForm
+    partial class DBTableCreateForm
     {
         /// <summary>
         /// Required designer variable.
@@ -60,7 +60,7 @@
             MaximizeBox = false;
             Name = "DBTableCreateNameForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Table Create";
+            Text = "Enter Table Name";
             ResumeLayout(false);
             PerformLayout();
         }

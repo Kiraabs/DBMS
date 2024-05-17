@@ -69,7 +69,7 @@ namespace DBMS
 
         void ButtonCreateDB_Click(object sender, EventArgs e)
         {
-            var dbc = new DBCreateForm();
+            var dbc = new DBFileCreateForm();
             dbc.FormClosed += Dbc_FormClosed;
             dbc.ShowDialog();
         }

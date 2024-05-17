@@ -2,9 +2,9 @@
 
 namespace DBMS
 {
-    public partial class DBCreateForm : Form
+    public partial class DBFileCreateForm : Form
     {
-        public DBCreateForm()
+        public DBFileCreateForm()
         {
             InitializeComponent();
         }

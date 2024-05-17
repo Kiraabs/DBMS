@@ -10,9 +10,16 @@ namespace DBMS.ClassLibrary
 
         public List<(string ColName, object Value)> Attributes { get => _atrs; private set => _atrs = value; }
 
-        public DBTable(string[] arguments) : base(arguments)
+        public DBTable(string[] args) : base(args)
         {
             GetAtrs();
+        }
+
+        public override bool Rename(string newName)
+        {
+            DBException.ThrowIfStringIsEmpty(newName, "New table name was null or empty!");
+            DBProvider.ExecuteSimpleCmd($"ALTER TABLE '{TableName}' RENAME TO '{newName}'");
+            return base.Rename(newName);
         }
 
         void GetAtrs()

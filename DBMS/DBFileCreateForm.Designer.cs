@@ -1,6 +1,6 @@
 ﻿namespace DBMS
 {
-    partial class DBCreateForm
+    partial class DBFileCreateForm
     {
         /// <summary>
         /// Required designer variable.
@@ -49,7 +49,7 @@
             ButtonCreate.UseVisualStyleBackColor = true;
             ButtonCreate.Click += ButtonCreate_Click;
             // 
-            // DBCreateForm
+            // DBFileCreateForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -58,9 +58,9 @@
             Controls.Add(TextBoxDBName);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
-            Name = "DBCreateForm";
+            Name = "DBFileCreateForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Enter database file name";
+            Text = "Enter Database File Name";
             ResumeLayout(false);
             PerformLayout();
         }
