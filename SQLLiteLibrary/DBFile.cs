@@ -45,7 +45,7 @@ namespace DBMS.ClassLibrary
             InternalOpen(name);
 
             if (File.Exists(_path))
-                DBException.WrMSG("Database with entered name already exists!");
+                UserMSG.Warn("Database with entered name already exists!");
             else
             {
                 try
@@ -55,7 +55,7 @@ namespace DBMS.ClassLibrary
                     return true;
                 }
                 catch (Exception ex) 
-                    { DBException.ErrMSG(ex.Message); }
+                    { UserMSG.Error(ex.Message); }
             }
 
             InternalClose();
@@ -68,7 +68,7 @@ namespace DBMS.ClassLibrary
             InternalOpen(external.Name);
 
             if (File.Exists(_path))
-                DBException.WrMSG("Database with entered name already exists!");
+                UserMSG.Warn("Database with entered name already exists!");
             else
             {
                 try
@@ -78,7 +78,7 @@ namespace DBMS.ClassLibrary
                     return true;
                 }
                 catch (Exception ex)
-                    { DBException.ErrMSG(ex.Message); }
+                    { UserMSG.Error(ex.Message); }
             }
 
             InternalClose();
@@ -91,7 +91,7 @@ namespace DBMS.ClassLibrary
             InternalOpen(name);
 
             if (!File.Exists(_path))
-                DBException.WrMSG("Database with entered name doesn't exists!");
+                UserMSG.Warn("Database with entered name doesn't exists!");
             else
             {
                 try
@@ -101,7 +101,7 @@ namespace DBMS.ClassLibrary
                     return true;
                 }
                 catch (Exception ex)
-                    { DBException.ErrMSG(ex.Message); }
+                    { UserMSG.Error(ex.Message); }
             }
 
             InternalClose();
@@ -115,7 +115,7 @@ namespace DBMS.ClassLibrary
 
             if (TableIsExist(name))
             {
-                DBException.WrMSG("Table name was empty or already exists!");
+                UserMSG.Warn("Table name was empty or already exists!");
                 return false;
             }
 
@@ -131,7 +131,7 @@ namespace DBMS.ClassLibrary
 
             if (!TableIsExist(name))
             {
-                DBException.WrMSG("Table name was empty or doesn't exists!");
+                UserMSG.Warn("Table name was empty or doesn't exists!");
                 return false;
             }
 
@@ -148,8 +148,6 @@ namespace DBMS.ClassLibrary
                 return Tables.Where(i => i.TableName == name).FirstOrDefault()!;
             return null!;
         }
-
-
 
         static void InternalOpen(string name)
         {
@@ -185,7 +183,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                DBException.ErrMSG(ex.Message);
+                UserMSG.Error(ex.Message);
                 return false;
             }
         }

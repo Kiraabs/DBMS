@@ -4,7 +4,7 @@ namespace DBMS
 {
     public partial class DBModifierForm : Form
     {
-        DBTable _tabMod;
+        readonly DBTable _tabMod;
 
         public DBModifierForm(string tableName)
         {
@@ -14,44 +14,24 @@ namespace DBMS
             TextBoxTableName.Text = tableName;
             TextBoxTableName.SelectionStart = TextBoxTableName.TextLength;
         }
+        void ButtonBack_Click(object sender, EventArgs e) => Close();
 
         void ButtonTableRename_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(TextBoxTableName.Text))
-            {
-                MessageBox.Show
-                (
-                    "Table name was empty! Please, enter table name.",
-                    "Empty",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+            if (UserMSG.WarnIfTextEmpty("Please, enter the table name!", TextBoxTableName.Text).Empty)
                 return;
-            }
-            else if (TextBoxTableName.Text == _tabMod.TableName)
-            {
-                MessageBox.Show
-                (
-                    "The table names match! Please, enter different table name.",
-                    "Names match",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+
+            if (UserMSG.WarnIfTrue("The table names match! Please, enter different table name.",
+                TextBoxTableName.Text == _tabMod.TableName).True)
                 return;
-            }
-            else
+
+            try
             {
                 if (_tabMod.Rename(TextBoxTableName.Text))
-                {
-                    MessageBox.Show
-                    (
-                        "Table successfully renamed!",
-                        "Success",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                }
+                    UserMSG.Info("Table successfully renamed!");
             }
+            catch (Exception ex)
+                { UserMSG.Error(ex.Message); }
         }
     }
 }

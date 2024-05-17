@@ -53,7 +53,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                DBException.ErrMSG(ex.Message);
+                UserMSG.Error(ex.Message);
                 return false;
             }
         }
@@ -73,7 +73,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                DBException.ErrMSG(ex.Message);
+                UserMSG.Error(ex.Message);
                 throw;
             }
         }
@@ -92,7 +92,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                DBException.ErrMSG(ex.Message);
+                UserMSG.Error(ex.Message);
                 throw;
             }
         }
@@ -113,7 +113,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                DBException.ErrMSG(ex.Message);
+                UserMSG.Error(ex.Message);
                 return false;
             }
         }
@@ -127,7 +127,7 @@ namespace DBMS.ClassLibrary
             }
             catch (Exception ex)
             {
-                DBException.ErrMSG(ex.Message);
+                UserMSG.Error(ex.Message);
                 return false;
             }
         }

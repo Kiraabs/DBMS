@@ -11,33 +11,22 @@ namespace DBMS
 
         private void ButtonCreate_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(TextBoxDBName.Text))
-            {
-                if (TextBoxDBName.Text.Contains(".db"))
-                    TextBoxDBName.Text = TextBoxDBName.Text.Replace(".db", string.Empty);
+            if (UserMSG.WarnIfTextEmpty("Database file name was empty!", TextBoxDBName.Text).Empty)
+                return;
 
-                if (DBFile.Create(TextBoxDBName.Text))
+            if (TextBoxDBName.Text.Contains(".db"))
+                TextBoxDBName.Text = TextBoxDBName.Text.Replace(".db", string.Empty);
+
+            try
+            {
+                if (DBFile.Create(TextBoxDBName.Text)) 
                 {
                     TextBoxDBName.Clear();
-                    MessageBox.Show
-                    (
-                        "Database file successfully created!",
-                        "Success",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
+                    UserMSG.Info("Database file successfully created!");
                 }
             }
-            else
-            {
-                MessageBox.Show
-                (
-                    "Database file name was empty!",
-                    "Empty",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-            }
+            catch (Exception ex)
+                { UserMSG.Error(ex.Message); }
         }
     }
 }

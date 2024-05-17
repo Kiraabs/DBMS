@@ -11,28 +11,16 @@ namespace DBMS
 
         private void ButtonCreate_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TextBoxTableName.Text))
-            {
-                MessageBox.Show
-                (
-                    "Please, enter the table name!",
-                    "Empty",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+            if (UserMSG.WarnIfTextEmpty("Please, enter the table name!", TextBoxTableName.Text).Empty)
                 return;
-            }
 
-            if (DBFile.CreateTable(TextBoxTableName.Text))
+            try
             {
-                MessageBox.Show
-                (
-                    "Table successfully created",
-                    "Success",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                if (DBFile.CreateTable(TextBoxTableName.Text))
+                    UserMSG.Info("Table successfully created");
             }
+            catch (Exception ex)
+                { UserMSG.Error(ex.Message); }
         }
     }
 }

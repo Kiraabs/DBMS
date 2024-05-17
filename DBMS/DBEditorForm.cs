@@ -19,91 +19,61 @@ namespace DBMS
         void RefreshListView()
         {
             ListViewTables.Items.Clear();
+            ListViewTableInfo.Items.Clear();
             ScanDB();
         }
 
         void TryDropTable()
         {
             var atLsOneDropped = false;
-
             for (int i = 0; i < ListViewTables.SelectedItems.Count; i++)
-            {
                 if (DBFile.DropTable(ListViewTables.SelectedItems[i].Text))
                     atLsOneDropped = true;
-            }
 
             if (atLsOneDropped)
             {
                 RefreshListView();
-                MessageBox.Show
-                (
-                    "Selected table(-s) was successfully dropped!",
-                    "Success",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                UserMSG.Info("Selected table(-s) was successfully dropped!");
             }
         }
 
         void OpenTableToModify()
         {
+            if (UserMSG.WarnIfTrue("You have no or several selected table(-s). Please, select only one!", 
+                ListViewTables.SelectedItems.Count != 1).True)
+                return;
+
             var dbmf = new DBModifierForm(ListViewTables.SelectedItems[0].Text);
             if (dbmf.ShowDialog() == DialogResult.Cancel)
                 RefreshListView();
         }
 
+        void ButtonModifyTable_Click(object sender, EventArgs e) => OpenTableToModify();
+
+        void ListViewTables_ItemActivate(object sender, EventArgs e) => OpenTableToModify();
+
+        void DBTableCreateForm_Closed(object? sender, FormClosedEventArgs e) => RefreshListView();
+
+        void ButtonQuit_Click(object sender, EventArgs e) => Close();
+
+        void ButtonDropTable_Click(object sender, EventArgs e)
+        {
+            if (UserMSG.WarnIfTrue("Please, select at least one table to drop!",
+                ListViewTables.SelectedItems.Count == 0).True)
+                return;
+
+            var conf = UserMSG.Confirm($"Are you sure about to drop: {ListViewTables.SelectedItems.Count} table(-s)?");
+            if (conf == DialogResult.Yes)
+                TryDropTable();
+        }
         void ButtonCreateTable_Click(object sender, EventArgs e)
         {
             var dbtcn = new DBTableCreateForm();
             dbtcn.Show();
-            dbtcn.FormClosed += DBForm_Closed;
+            dbtcn.FormClosed += DBTableCreateForm_Closed;
         }
 
-        void ButtonDropTable_Click(object sender, EventArgs e)
-        {
-            if (ListViewTables.SelectedItems.Count == 0)
-            {
-                MessageBox.Show
-                (
-                    $"Please, select at least one table to drop!",
-                    "Not selected",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                return;
-            }
-
-            var mbr = MessageBox.Show
-            (
-                $"Are you sure about to drop: {ListViewTables.SelectedItems.Count} table(-s)?",
-                "Confirmation",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question
-            );
-            if (mbr == DialogResult.Yes)
-                TryDropTable();
-        }
-
-        void ButtonModifyTable_Click(object sender, EventArgs e)
-        {
-            if (ListViewTables.SelectedItems.Count != 1)
-            {
-                MessageBox.Show
-                (
-                    "You have no or several selected table(-s). Please, select only one!",
-                    "Selection warning",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
-                return;
-            }
-
-            OpenTableToModify();
-        }
-
-        void DBForm_Closed(object? sender, FormClosedEventArgs e) => RefreshListView();
-
-        private void ListViewTables_SelectedIndexChanged(object sender, EventArgs e)
+        void ListViewTables_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ListViewTables.SelectedItems.Count == 1)
             {
@@ -111,8 +81,6 @@ namespace DBMS
                 ListViewTableInfo.TableInfoToView(ListViewTables.SelectedItems[0].Text);
             }
         }
-
-        void ButtonQuit_Click(object sender, EventArgs e) => Close();
 
         void DBEditorForm_FormClosed(object sender, FormClosedEventArgs e)
         {

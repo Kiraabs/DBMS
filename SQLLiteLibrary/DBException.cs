@@ -46,28 +46,5 @@ namespace DBMS.ClassLibrary
             if (connection == null)
                 throw new ArgumentException("Connection wasn't provided!");
         }
-
-        public static void WrMSG(string msg)
-        {
-            MessageBox.Show
-            (
-                msg,
-                "Warning",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Warning
-            );
-        }
-
-        public static void ErrMSG(string msg)
-        {
-            MessageBox.Show
-            (
-                msg,
-                "Error",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Error
-            );
-        }
-
     }
 }

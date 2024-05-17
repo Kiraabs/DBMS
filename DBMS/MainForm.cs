@@ -1,5 +1,4 @@
 using DBMS.ClassLibrary;
-using System.Data;
 
 namespace DBMS
 {
@@ -11,34 +10,24 @@ namespace DBMS
             ScanDBFold();
         }
 
-        void ScanDBFold()
-        {
-            foreach (var fi in DBRoot.Dir.GetFiles())
-            {
-                if (fi.Extension.Contains(".db"))
-                    ListViewDBs.Items.Add(fi.Name.Replace(fi.Extension, string.Empty));
-            }
-        }
-
         void RefreshListView()
         {
             ListViewDBs.Items.Clear();
             ScanDBFold();
         }
 
+        void ScanDBFold()
+        {
+            foreach (var fi in DBRoot.Dir.GetFiles())
+                if (fi.Extension.Contains(".db"))
+                    ListViewDBs.Items.Add(fi.Name.Replace(fi.Extension, string.Empty));
+        }
+
         void TryOpenDBFile()
         {
-            if (ListViewDBs.SelectedItems.Count != 1)
-            {
-                MessageBox.Show
-                (
-                    "You have no or several selected database file(-s). Please, select only one!",
-                    "Selection warning",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+            if (UserMSG.WarnIfTrue("You have no or several selected database file(-s). Please, select only one!",
+                ListViewDBs.SelectedItems.Count != 1).True)
                 return;
-            }
 
             DBFile.Open(ListViewDBs.SelectedItems[0].Text);
             _ = new DBEditorForm().ShowDialog();
@@ -47,24 +36,27 @@ namespace DBMS
         void TryDropDBFile()
         {
             var oneDropped = false;
-
             for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
-            {
                 if (DBFile.Drop(ListViewDBs.SelectedItems[i].Text))
                     oneDropped = true;
-            }
 
             if (oneDropped)
             {
                 RefreshListView();
-                MessageBox.Show
-                (
-                    $"Selected database file(-s) was successfully dropped!",
-                    "Success",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                UserMSG.Info("Selected database file(-s) was successfully dropped!");
             }
+        }
+
+        void ButtonEditor_Click(object sender, EventArgs e) => TryOpenDBFile();
+
+        void ListViewDBs_ItemActivate(object sender, EventArgs e) => TryOpenDBFile();
+
+        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
+
+        void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (DBFile.IsOpen)
+                DBFile.Close();
         }
 
         void ButtonCreateDB_Click(object sender, EventArgs e)
@@ -74,71 +66,31 @@ namespace DBMS
             dbc.ShowDialog();
         }
 
-        void Dbc_FormClosed(object? sender, FormClosedEventArgs e) => RefreshListView();
-
         void ButtonDropDB_Click(object sender, EventArgs e)
         {
-            if (ListViewDBs.SelectedItems.Count == 0)
-            {
-                MessageBox.Show
-                (
-                    "Please, select at least one or several database file(-s) to drop!",
-                    "Not selected",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning
-                );
+            if (UserMSG.WarnIfTrue("Please, select at least one or several database file(-s) to drop!",
+                ListViewDBs.SelectedItems.Count == 0).True)
                 return;
-            }
 
-            var mbr = MessageBox.Show
-            (
-                $"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} database file(-s)?",
-                "Confirmation",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question
-            );
-            if (mbr == DialogResult.Yes)
+            var conf = UserMSG.Confirm($"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} database file(-s)?");
+            if (conf == DialogResult.Yes)
                 TryDropDBFile();
-        }
-
-        void ButtonEditor_Click(object sender, EventArgs e) => TryOpenDBFile();
-
-        void ListViewDBs_ItemActivate(object sender, EventArgs e) => TryOpenDBFile();
-
-        void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (DBFile.IsOpen)
-                DBFile.Close();
         }
 
         void ButtonAddForeignDB_Click(object sender, EventArgs e)
         {
-            var mbr = MessageBox.Show
-            (
-                "External database file will be permanently moved to program root directory. Are you sure?",
-                "Confirmation",
-                MessageBoxButtons.YesNoCancel,
-                MessageBoxIcon.Question
-            );
-
-            if (mbr != DialogResult.Yes)
+            var conf = UserMSG.Confirm("External database file will be permanently moved to program root directory. Are you sure?");
+            if (conf != DialogResult.Yes)
                 return;
 
             var ofd = new OpenFileDialog() { Filter = "(*.db)|*.db" };
+            if (ofd.ShowDialog() != DialogResult.OK)
+                return;
 
-            if (ofd.ShowDialog() == DialogResult.OK)
+            if (DBFile.MoveExternal(new FileInfo(ofd.FileName)))
             {
-                if (DBFile.MoveExternal(new FileInfo(ofd.FileName)))
-                {
-                    RefreshListView();
-                    MessageBox.Show
-                    (
-                        "External database file successfully added!",
-                        "Success",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Information
-                    );
-                }
+                RefreshListView();
+                UserMSG.Info("External database file successfully added!");
             }
         }
     }
