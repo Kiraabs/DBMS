@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Data;
+using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary
 {
@@ -11,6 +12,7 @@ namespace DBMS.ClassLibrary
         static SQLiteConnection _cnn = null!;
         static SQLiteCommand _cmd = null!;
         static SQLiteDataReader _rdr = null!;
+        static SQLiteDataAdapter _adr = null!;
 
         public static bool Provide(string path)
         {
@@ -29,11 +31,18 @@ namespace DBMS.ClassLibrary
             _cnn.Dispose();
             _cmd.Dispose();
             _rdr.Dispose();
+            _adr.Dispose();
             _cnn = null!;
             _cmd = null!;
             _rdr = null!;
+            _adr = null!;
         }
 
+        /// <summary>
+        /// Executes cmd.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public static bool ExecuteSimpleCmd(string text)
         {
             try
@@ -49,6 +58,11 @@ namespace DBMS.ClassLibrary
             }
         }
 
+        /// <summary>
+        /// Returns executed as reader cmd.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
         public static SQLiteDataReader ExecuteReaderCmd(string text)
         {
             try
@@ -56,6 +70,25 @@ namespace DBMS.ClassLibrary
                 WriteCmd(text);
                 _rdr = _cmd.ExecuteReader();
                 return _rdr;
+            }
+            catch (Exception ex)
+            {
+                DBException.ErrMSG(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Returns executed as adapter cmd.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static SQLiteDataAdapter ExecuteAdapterCmd(string text)
+        {
+            try
+            {
+                WriteCmd(text);
+                return _adr = new SQLiteDataAdapter(_cmd);
             }
             catch (Exception ex)
             {

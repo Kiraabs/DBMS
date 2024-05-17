@@ -4,14 +4,19 @@ namespace DBMS.ClassLibrary
 {
     public static class ListViewExtension
     {
-        public static void TableToView(this ListView view, string name)
+        public static void TableInfoToView(this ListView view, string name)
         {
-            for (int i = 0; i < view.Columns.Count; i++)
+            var table = DBFile.GetTable(name);
+            var attrs = new string[table.Attributes.Count];
+
+            for (int i = 0; i < table.Attributes.Count; i++)
             {
-                var col = view.Columns[i];
-                var lvi = new ListViewItem(new string[] { col.Name });
-                view.Items.Add(lvi);
+                attrs[i] = table.Attributes[i].Value.ToString()!;
+                if (attrs[i] == string.Empty)
+                    attrs[i] = "NULL";
             }
+
+            view.Items.Add(new ListViewItem(attrs));
         }
     }
 }

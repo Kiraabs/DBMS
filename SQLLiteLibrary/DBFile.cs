@@ -28,7 +28,7 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfDBFileNotCreated(_path);
             Tables = [];
             DBProvider.Provide(_path);
-            NamesRead();
+            ReadTables();
         }
 
         public static void Close()
@@ -119,7 +119,7 @@ namespace DBMS.ClassLibrary
             }
 
             if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE '{name}' (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
-                return NamesRead();
+                return ReadTables();
             return false;
         }
 
@@ -135,7 +135,7 @@ namespace DBMS.ClassLibrary
             }
 
             if (DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'"))
-                return NamesRead(true);
+                return ReadTables(true);
             return false;
         }
 
@@ -164,7 +164,7 @@ namespace DBMS.ClassLibrary
             IsOpen = false;
         }
 
-        static bool NamesRead(bool clear = false)
+        static bool ReadTables(bool clear = false)
         {
             DBException.ThrowIfDBFileIsNotOpened(_path);
 
@@ -176,7 +176,8 @@ namespace DBMS.ClassLibrary
 
                 while (rdr.Read())
                     if (rdr.GetString(0) != SysTable && !TableIsExist(rdr.GetString(0)))
-                        Tables.Add(new DBTable(["", _name, rdr.GetString(0)]));
+                        Tables.Add(new DBTable([string.Empty, _name, rdr.GetString(0)]));
+
                 return true;
             }
             catch (Exception ex)

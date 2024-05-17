@@ -96,7 +96,7 @@ namespace DBMS
             if (ListViewTables.SelectedItems.Count == 1)
             {
                 ListViewTableInfo.Items.Clear();
-                ListViewTableInfo.TableToView(ListViewTables.SelectedItems[0].Text);
+                ListViewTableInfo.TableInfoToView(ListViewTables.SelectedItems[0].Text);
             }
         }
 
