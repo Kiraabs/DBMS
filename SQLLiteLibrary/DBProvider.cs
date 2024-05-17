@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary
 {
@@ -68,8 +67,7 @@ namespace DBMS.ClassLibrary
             try
             {
                 WriteCmd(text);
-                _rdr = _cmd.ExecuteReader();
-                return _rdr;
+                return _rdr = _cmd.ExecuteReader();
             }
             catch (Exception ex)
             {
@@ -97,6 +95,10 @@ namespace DBMS.ClassLibrary
             }
         }
 
+        static bool Connect() => ConnectionAction(_cnn.Open);
+
+        static bool Disconnect() => ConnectionAction(_cnn.Close);
+
         static void WriteCmd(string text)
         {
             DBException.ThrowIfStringIsEmpty(text, "Command text was empty!");
@@ -104,25 +106,11 @@ namespace DBMS.ClassLibrary
             _cmd = new SQLiteCommand(text, _cnn);
         }
 
-        static bool Connect()
+        static bool ConnectionAction(Action action)
         {
             try
             {
-                _cnn.Open();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                UserMSG.Error(ex.Message);
-                return false;
-            }
-        }
-
-        static bool Disconnect()
-        {
-            try
-            {
-                _cnn.Close();
+                action();
                 return true;
             }
             catch (Exception ex)

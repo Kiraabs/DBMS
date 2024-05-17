@@ -62,8 +62,8 @@ namespace DBMS
                 ListViewTables.SelectedItems.Count == 0).True)
                 return;
 
-            var conf = UserMSG.Confirm($"Are you sure about to drop: {ListViewTables.SelectedItems.Count} table(-s)?");
-            if (conf == DialogResult.Yes)
+            if (UserMSG.Confirm($"Are you sure about to drop: {ListViewTables.SelectedItems.Count} " +
+                $"table(-s)?") == DialogResult.Yes)
                 TryDropTable();
         }
         void ButtonCreateTable_Click(object sender, EventArgs e)

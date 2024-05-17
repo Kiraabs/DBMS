@@ -72,15 +72,15 @@ namespace DBMS
                 ListViewDBs.SelectedItems.Count == 0).True)
                 return;
 
-            var conf = UserMSG.Confirm($"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} database file(-s)?");
-            if (conf == DialogResult.Yes)
+            if (UserMSG.Confirm($"Are you sure about to drop: {ListViewDBs.SelectedItems.Count} " +
+                $"database file(-s)?") == DialogResult.Yes)
                 TryDropDBFile();
         }
 
         void ButtonAddForeignDB_Click(object sender, EventArgs e)
         {
-            var conf = UserMSG.Confirm("External database file will be permanently moved to program root directory. Are you sure?");
-            if (conf != DialogResult.Yes)
+            if (UserMSG.Confirm("External database file will be permanently moved to program root directory. " +
+                "Are you sure?") != DialogResult.Yes)
                 return;
 
             var ofd = new OpenFileDialog() { Filter = "(*.db)|*.db" };
