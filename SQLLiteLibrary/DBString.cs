@@ -1,7 +1,20 @@
-﻿namespace DBMS.ClassLibrary
+﻿using static System.Net.Mime.MediaTypeNames;
+
+namespace DBMS.ClassLibrary
 {
     public static class DBString
     {
+        public static string BuildInsertIntoSelect(string to, string from, string[] cols, string[] vals)
+        {
+            DBException.ThrowIfStringIsEmpty(cols.ToString()!, "Columns was null!");
+            DBException.ThrowIfStringIsEmpty(vals.ToString()!, "Values was null!");
+            DBException.ThrowIfStringIsEmpty(from, "From was null!");
+            DBException.ThrowIfStringIsEmpty(to, "To was null!");
+            var cls = string.Join(", ", cols);
+            var vls = string.Join(", ", vals);
+            return $"INSERT INTO {to} ({cls}) SELECT {vls} FROM {from}";
+        }
+
         public static string BuildTableSchema(in DBTable dt)
         {
             DBException.ThrowIfObjectIsNull(dt, "Table was null!");
@@ -19,7 +32,7 @@
             return newShem += $"{pk})";
         }
 
-        public static string BuildField(string name, string type, bool notNull, bool uniq, string defVal = "")
+        public static string BuildField(string name, string type, bool notNull = false, bool uniq = false, string defVal = "")
         {
             var fld = $"'{name}' {type}";
             if (notNull)
@@ -31,18 +44,13 @@
             return fld;
         }
 
-        public static string BuildPrimaryField(string name, bool pk, bool ai)
+        public static string BuildPrimaryField(string name, bool ai)
         {
             DBException.ThrowIfStringIsEmpty(name, "Field name was null or empty!");
-            var fpk = string.Empty;
-
-            if (pk)
-            {
-                fpk = $"PRIMARY KEY ('{name}'";
-                if (ai)
-                    fpk += " AUTOINCREMENT";
-                fpk += ")";
-            }
+            var fpk = $"PRIMARY KEY ('{name}'";
+            if (ai)
+                fpk += " AUTOINCREMENT";
+            fpk += ")";
             return fpk;
         }
     }

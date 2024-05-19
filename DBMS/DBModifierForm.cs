@@ -6,7 +6,7 @@ namespace DBMS
     public partial class DBModifierForm : Form
     {
         bool _hasChanges;
-        readonly DBTable _tabMod;
+        DBTable _tabMod;
 
         public DBModifierForm(string tableName)
         {
@@ -32,7 +32,7 @@ namespace DBMS
                     UserMSG.Info("Table successfully renamed!");
             }
             catch (Exception ex)
-            { UserMSG.Error(ex.Message); }
+                { UserMSG.Error(ex.Message); }
         }
 
         void MakeOnlyOneAI()
@@ -43,8 +43,6 @@ namespace DBMS
             caiCls.ToList().ForEach(c => c.Value = false);
             pkCls[DataGridViewFields.SelectedCells[0].OwningRow.Index].Value = true;
         }
-
-        void DataGridViewFields_CellValueChanged(object sender, DataGridViewCellEventArgs e) => _hasChanges = true;
 
         void ButtonBack_Click(object sender, EventArgs e)
         {
@@ -64,6 +62,7 @@ namespace DBMS
             DataGridViewFields.Rows[^1].Cells["CName"].Value = $"Field {DataGridViewFields.RowCount}";
             DataGridViewFields.Rows[^1].Cells["CType"].Value = "INTEGER";
             DataGridViewFields.Rows[^1].Cells["CDef"].Value = "NULL";
+            _hasChanges = true;
         }
 
         void ButtonRemoveField_Click(object sender, EventArgs e)
@@ -84,6 +83,7 @@ namespace DBMS
                     MakeOnlyOneAI();
                 if (DataGridViewFields[e.ColumnIndex, e.RowIndex].OwningColumn == CPK)
                     PKSelect();
+                _hasChanges = true;
             }
         }
 
@@ -108,9 +108,7 @@ namespace DBMS
                     "to commit all changes in table structure?") != DialogResult.Yes)
                     return;
 
-                _tabMod.DataGridViewToDBTable(DataGridViewFields);
-
-                if (_tabMod.Alter())
+                if (DBQuery.AlterTable(_tabMod, _tabMod.CollectAttrsFromDataGridView(DataGridViewFields)))
                 {
                     UserMSG.Info("Table structure was successfully changed!");
                     _hasChanges = false;

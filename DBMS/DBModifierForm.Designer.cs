@@ -35,8 +35,6 @@
             ButtonRemoveField = new Button();
             ButtonAddField = new Button();
             DataGridViewFields = new DataGridView();
-            ButtonCommit = new Button();
-            ButtonBack = new Button();
             CName = new DataGridViewTextBoxColumn();
             CType = new DataGridViewComboBoxColumn();
             CNN = new DataGridViewCheckBoxColumn();
@@ -44,6 +42,8 @@
             CPK = new DataGridViewCheckBoxColumn();
             CU = new DataGridViewCheckBoxColumn();
             CAI = new DataGridViewCheckBoxColumn();
+            ButtonCommit = new Button();
+            ButtonBack = new Button();
             GroupBoxTableName.SuspendLayout();
             GroupBoxFields.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DataGridViewFields).BeginInit();
@@ -125,27 +125,6 @@
             DataGridViewFields.Size = new Size(758, 357);
             DataGridViewFields.TabIndex = 3;
             DataGridViewFields.CellContentClick += DataGridViewFields_CellContentClick;
-            DataGridViewFields.CellValueChanged += DataGridViewFields_CellValueChanged;
-            // 
-            // ButtonCommit
-            // 
-            ButtonCommit.Location = new Point(6, 413);
-            ButtonCommit.Name = "ButtonCommit";
-            ButtonCommit.Size = new Size(94, 29);
-            ButtonCommit.TabIndex = 2;
-            ButtonCommit.Text = "Commit";
-            ButtonCommit.UseVisualStyleBackColor = true;
-            ButtonCommit.Click += ButtonCommit_Click;
-            // 
-            // ButtonBack
-            // 
-            ButtonBack.Location = new Point(688, 566);
-            ButtonBack.Name = "ButtonBack";
-            ButtonBack.Size = new Size(94, 29);
-            ButtonBack.TabIndex = 3;
-            ButtonBack.Text = "Back";
-            ButtonBack.UseVisualStyleBackColor = true;
-            ButtonBack.Click += ButtonBack_Click;
             // 
             // CName
             // 
@@ -190,6 +169,26 @@
             // 
             CAI.HeaderText = "Auto Increment";
             CAI.Name = "CAI";
+            // 
+            // ButtonCommit
+            // 
+            ButtonCommit.Location = new Point(6, 413);
+            ButtonCommit.Name = "ButtonCommit";
+            ButtonCommit.Size = new Size(94, 29);
+            ButtonCommit.TabIndex = 2;
+            ButtonCommit.Text = "Commit";
+            ButtonCommit.UseVisualStyleBackColor = true;
+            ButtonCommit.Click += ButtonCommit_Click;
+            // 
+            // ButtonBack
+            // 
+            ButtonBack.Location = new Point(688, 566);
+            ButtonBack.Name = "ButtonBack";
+            ButtonBack.Size = new Size(94, 29);
+            ButtonBack.TabIndex = 3;
+            ButtonBack.Text = "Back";
+            ButtonBack.UseVisualStyleBackColor = true;
+            ButtonBack.Click += ButtonBack_Click;
             // 
             // DBModifierForm
             // 

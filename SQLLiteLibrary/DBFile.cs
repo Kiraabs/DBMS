@@ -35,7 +35,7 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfDBFileNotCreated(_path);
             Tables = [];
             DBProvider.Provide(_path);
-            GetTables();
+            ReadTables();
         }
 
         public static bool Create(string name)
@@ -73,7 +73,7 @@ namespace DBMS.ClassLibrary
                 return false;
 
             if (DBQuery.CreateTable(name, "f"))
-                return GetTables();
+                return ReadTables();
             return false;
         }
 
@@ -85,7 +85,7 @@ namespace DBMS.ClassLibrary
                 return false;
 
             if (DBQuery.DropTable(name))
-                return GetTables(true);
+                return ReadTables(true);
             return false;
         }
 
@@ -130,7 +130,7 @@ namespace DBMS.ClassLibrary
             }
         }
 
-        static bool GetTables(bool clear = false)
+        static bool ReadTables(bool clear = false)
         {
             DBException.ThrowIfDBFileIsNotOpened(_path);
 

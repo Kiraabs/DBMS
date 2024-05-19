@@ -6,16 +6,33 @@ namespace DBMS.ClassLibrary
     {
         readonly int _attrsCnt = 0;
         string _shem = string.Empty;
-        List<DBTableAttribute> _atrs = [];
+        List<DBTableAttribute> _attrs = [];
 
         public string Shema { get => _shem; private set => _shem = value; }
-        public List<DBTableAttribute> Attributes { get => _atrs; private set => _atrs = value; }
+        public List<DBTableAttribute> Attributes { get => _attrs; private set => _attrs = value; }
 
+        /// <summary>
+        /// Constructor for auto creating.
+        /// </summary>
+        /// <param name="args"></param>
         public DBTable(string[] args) : base(args)
         {
             _attrsCnt = DBQuery.TableRows(TableName).Count;
             _shem = DBQuery.TableSchema(TableName);
             GetAttrs();
+        }
+
+        /// <summary>
+        /// Constructor for manually creating.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="attrs"></param>
+        public DBTable(string[] args, DBTableAttribute[] attrs) : base(args)
+        {
+            DBException.ThrowIfObjectIsNull(attrs, "Table should contains attributes!");
+            _attrsCnt = attrs.Length;
+            _attrs = [.. attrs];
+            _shem = DBString.BuildTableSchema(this);
         }
 
         public override bool Rename(string newName)
@@ -25,15 +42,10 @@ namespace DBMS.ClassLibrary
             return false;
         }
 
-        public bool Alter()
-        {
-            return DBQuery.AlterTable(TableName);
-        }
-
         void GetAttrs()
         {
             for (int i = 0; i < _attrsCnt; i++)
-                _atrs.Add(new DBTableAttribute(DBQuery.TableRows(TableName)[i].ItemArray!, this));
+                _attrs.Add(new DBTableAttribute(DBQuery.TableRows(TableName)[i].ItemArray!, this));
         }
     }
 }

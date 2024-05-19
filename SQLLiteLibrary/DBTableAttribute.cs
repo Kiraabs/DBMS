@@ -33,7 +33,9 @@ namespace DBMS.ClassLibrary
         public (string Field, string PK) FieldView()
         {
             var field = DBString.BuildField(ColumnName, DataTypeName!, (bool)AllowDBNull!, (bool)IsUnique!);
-            var fpk = DBString.BuildPrimaryField(ColumnName, (bool)IsKey!, (bool)IsAutoIncrement!);
+            var fpk = string.Empty;
+            if ((bool)IsKey!)
+                fpk = DBString.BuildPrimaryField(ColumnName, (bool)IsAutoIncrement!);
             return (field, fpk);
         }
 
@@ -51,8 +53,12 @@ namespace DBMS.ClassLibrary
 
         void ArgsPass(in object[] args)
         {
-            for (int i = 1; i < args.Length; i++)
-                _args[i - 1] = args[i];
+            if (_args.Length == args.Length)
+                for (int i = 0; i < args.Length; i++)
+                    _args[i] = args[i];
+            else
+                for (int i = 1; i < args.Length; i++)
+                    _args[i - 1] = args[i];
         }
 
         void UniqueCheck() => IsUnique = CheckConstraint("UNIQUE");

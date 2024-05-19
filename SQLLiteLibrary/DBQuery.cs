@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DBMS.ClassLibrary.Extensions;
+using System.Collections.Generic;
 using System.Data;
 using System.Xml.Linq;
 
@@ -45,36 +46,37 @@ namespace DBMS.ClassLibrary
             return tbls;
         }
 
-        public static bool CreateTable(string name, string fName, bool pk = false, bool autoInc = false)
+        public static bool CreateTable(string name, string pkName)
         {
-            
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE '{name}' (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT))");
+            DBException.ThrowIfStringIsEmpty(pkName, "Primary key column name was null or empty!");
+            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkName, "INTEGER")}, {DBString.BuildPrimaryField(pkName, true)})");
         }
 
-        public static bool AlterTable(DBTable dt)
+        public static bool AlterTable(DBTable table, DBTableAttribute[] tempAttrs)
         {
-            DBException.ThrowIfObjectIsNull(dt, "Table was null!");
-            var newShem = dt.Shema.Replace(dt.Shema, DBString.BuildTableSchema(dt)).Replace(dt.TableName, $"new_{dt.TableName}");
+            DBException.ThrowIfObjectIsNull(table, "Table was null!");
+            DBException.ThrowIfObjectIsNull(tempAttrs, "Temporal table attributes was null!");
+            // creating temporal table just as program object
+            var temporal = new DBTable([table.Arguments[0], table.DatabaseName, $"temp_{table.TableName}"], tempAttrs); 
 
             try
             {
-                DBProvider.ExecuteSimpleCmd(newShem);
-                DBProvider.ExecuteSimpleCmd($"INSERT INTO 'new_{dt.TableName}' SELECT * FROM '{dt.TableName}'");
-                DBProvider.ExecuteSimpleCmd($"DROP TABLE '{dt.TableName}'");
-                return TableRename($"new_{dt.TableName}", $"{dt.TableName}");
+                var insert = DBString.BuildInsertIntoSelect(
+                    temporal.TableName, 
+                    table.TableName, 
+                    temporal.ColumnIntersection(table), 
+                    temporal.ColumnIntersection(table));
+                DBProvider.ExecuteSimpleCmd(temporal.Shema); // creating temporal table directly in database
+                DBProvider.ExecuteSimpleCmd(insert);
+                DBProvider.ExecuteSimpleCmd($"DROP TABLE '{table.TableName}'");
+                return TableRename($"{temporal.TableName}", $"{table.TableName}");
             }
             catch (Exception ex)
             {
                 UserMSG.Error(ex.Message);
                 return false;
             }
-        }
-
-        public static bool AlterTable(string name)
-        {
-            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
-            return AlterTable(DBFile.GetTable(name));
         }
     }
 }
