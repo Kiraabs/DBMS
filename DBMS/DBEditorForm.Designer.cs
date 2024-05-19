@@ -94,7 +94,7 @@
             // 
             // CPK
             // 
-            CPK.Text = "Primar Key";
+            CPK.Text = "Primary Key";
             CPK.Width = 100;
             // 
             // ButtonCreateTable

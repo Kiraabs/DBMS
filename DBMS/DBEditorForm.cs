@@ -1,4 +1,5 @@
 ﻿using DBMS.ClassLibrary;
+using DBMS.ClassLibrary.Extensions;
 
 namespace DBMS
 {
@@ -78,7 +79,7 @@ namespace DBMS
             if (ListViewTables.SelectedItems.Count == 1)
             {
                 ListViewTableInfo.Items.Clear();
-                ListViewTableInfo.TableInfoToView(ListViewTables.SelectedItems[0].Text);
+                ListViewTableInfo.TableToListView(ListViewTables.SelectedItems[0].Text);
             }
         }
 

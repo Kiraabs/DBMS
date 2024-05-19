@@ -1,35 +1,36 @@
-﻿using System.Data;
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary
 {
     public sealed class DBTable : SQLiteVirtualTable
     {
-        DataTable _tabInf = null!;
-        List<(string ColName, object Value)> _atrs = [];
+        readonly int _atrsCnt = 0;
+        string _shem = string.Empty;
+        List<DBTableAttribute> _atrs = [];
 
-        public List<(string ColName, object Value)> Attributes { get => _atrs; private set => _atrs = value; }
+        public string Shema { get => _shem; private set => _shem = value; }
+        public List<DBTableAttribute> Attributes { get => _atrs; private set => _atrs = value; }
 
         public DBTable(string[] args) : base(args)
         {
-            GetAtrs();
+            _atrsCnt = DBQuery.TableRows(TableName).Count;
+            _shem = DBQuery.TableSchema(TableName);
+            GetAtrsFromDB();
         }
 
         public override bool Rename(string newName)
         {
-            DBException.ThrowIfStringIsEmpty(newName, "New table name was null or empty!");
-            DBProvider.ExecuteSimpleCmd($"ALTER TABLE '{TableName}' RENAME TO '{newName}'");
-            return base.Rename(newName);
+            if (DBQuery.TableRename(TableName, newName))
+                return base.Rename(newName);
+            return false;
         }
 
-        void GetAtrs()
+        void GetAtrsFromDB()
         {
-            _tabInf = new DataTable();
-            DBProvider.ExecuteAdapterCmd($"PRAGMA table_info('{TableName}')").Fill(_tabInf);
-            for (int i = 0; i < _tabInf.Rows.Count; i++)
-                for (int j = 0; j < _tabInf.Rows[i].ItemArray.Length; j++)
-                    _atrs.Add((_tabInf.Columns[j].ColumnName, _tabInf.Rows[i].ItemArray[j]!));
+            for (int i = 0; i < _atrsCnt; i++)
+                _atrs.Add(new DBTableAttribute(DBQuery.TableRows(TableName)[i].ItemArray!, this));
         }
     }
 }
 
+ 

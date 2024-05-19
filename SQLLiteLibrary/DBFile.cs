@@ -35,7 +35,7 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfDBFileNotCreated(_path);
             Tables = [];
             DBProvider.Provide(_path);
-            ReadTables();
+            GetTables();
         }
 
         public static bool Create(string name)
@@ -72,8 +72,8 @@ namespace DBMS.ClassLibrary
             if (UserMSG.WarnIfTrue("Table name was empty or already exists!", TableIsExist(name)).True)
                 return false;
 
-            if (DBProvider.ExecuteSimpleCmd($"CREATE TABLE '{name}' (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT));"))
-                return ReadTables();
+            if (DBQuery.CreateTable(name, "f"))
+                return GetTables();
             return false;
         }
 
@@ -84,8 +84,8 @@ namespace DBMS.ClassLibrary
             if (UserMSG.WarnIfTrue("Table name was empty or doesn't exists!", !TableIsExist(name)).True)
                 return false;
 
-            if (DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'"))
-                return ReadTables(true);
+            if (DBQuery.DropTable(name))
+                return GetTables(true);
             return false;
         }
 
@@ -130,19 +130,18 @@ namespace DBMS.ClassLibrary
             }
         }
 
-        static bool ReadTables(bool clear = false)
+        static bool GetTables(bool clear = false)
         {
             DBException.ThrowIfDBFileIsNotOpened(_path);
 
             try
             {
-                var rdr = DBProvider.ExecuteReaderCmd("SELECT name FROM sqlite_master WHERE type='table'");
                 if (clear) 
                     Tables.Clear();
 
-                while (rdr.Read())
-                    if (rdr.GetString(0) != SysTable && !TableIsExist(rdr.GetString(0)))
-                        Tables.Add(new DBTable([string.Empty, _name, rdr.GetString(0)]));
+                foreach (var item in DBQuery.GetTables())
+                    if (item != SysTable && !TableIsExist(item))
+                        Tables.Add(new DBTable([string.Empty, _name, item]));
 
                 return true;
             }

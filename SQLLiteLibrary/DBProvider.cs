@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Data;
+using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary
 {
@@ -10,8 +11,8 @@ namespace DBMS.ClassLibrary
         static string _path = string.Empty;
         static SQLiteConnection _cnn = null!;
         static SQLiteCommand _cmd = null!;
-        static SQLiteDataReader _rdr = null!;
         static SQLiteDataAdapter _adr = null!;
+        static DataTable _dt = null!;
 
         public static bool Provide(string path)
         {
@@ -29,12 +30,12 @@ namespace DBMS.ClassLibrary
             _path = string.Empty;
             _cnn.Dispose();
             _cmd.Dispose();
-            _rdr.Dispose();
             _adr.Dispose();
+            _dt.Dispose();
             _cnn = null!;
             _cmd = null!;
-            _rdr = null!;
             _adr = null!;
+            _dt = null!;
         }
 
         /// <summary>
@@ -58,25 +59,6 @@ namespace DBMS.ClassLibrary
         }
 
         /// <summary>
-        /// Returns executed as reader cmd.
-        /// </summary>
-        /// <param name="text"></param>
-        /// <returns></returns>
-        public static SQLiteDataReader ExecuteReaderCmd(string text)
-        {
-            try
-            {
-                WriteCmd(text);
-                return _rdr = _cmd.ExecuteReader();
-            }
-            catch (Exception ex)
-            {
-                UserMSG.Error(ex.Message);
-                throw;
-            }
-        }
-
-        /// <summary>
         /// Returns executed as adapter cmd.
         /// </summary>
         /// <param name="text"></param>
@@ -87,6 +69,27 @@ namespace DBMS.ClassLibrary
             {
                 WriteCmd(text);
                 return _adr = new SQLiteDataAdapter(_cmd);
+            }
+            catch (Exception ex)
+            {
+                UserMSG.Error(ex.Message);
+                throw;
+            }
+        }
+
+        /// <summary>
+        /// Executes cmd and retrieves data.
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static DataTable RetrieveDataFromCmd(string text)
+        {
+            try
+            {
+                _dt = new DataTable();
+                WriteCmd(text);
+                ExecuteAdapterCmd(text).Fill(_dt);
+                return _dt;
             }
             catch (Exception ex)
             {

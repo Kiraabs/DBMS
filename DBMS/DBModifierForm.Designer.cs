@@ -32,17 +32,21 @@
             GroupBoxTableName = new GroupBox();
             ButtonTableRename = new Button();
             GroupBoxFields = new GroupBox();
-            listView1 = new ListView();
-            CName = new ColumnHeader();
-            CType = new ColumnHeader();
-            CNN = new ColumnHeader();
-            CPK = new ColumnHeader();
-            CAI = new ColumnHeader();
-            CDefault = new ColumnHeader();
+            ButtonRemoveField = new Button();
+            ButtonAddField = new Button();
+            DataGridViewFields = new DataGridView();
             ButtonCommit = new Button();
             ButtonBack = new Button();
+            CName = new DataGridViewTextBoxColumn();
+            CType = new DataGridViewComboBoxColumn();
+            CNN = new DataGridViewCheckBoxColumn();
+            CDef = new DataGridViewTextBoxColumn();
+            CPK = new DataGridViewCheckBoxColumn();
+            CU = new DataGridViewCheckBoxColumn();
+            CAI = new DataGridViewCheckBoxColumn();
             GroupBoxTableName.SuspendLayout();
             GroupBoxFields.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DataGridViewFields).BeginInit();
             SuspendLayout();
             // 
             // TextBoxTableName
@@ -75,63 +79,63 @@
             // 
             // GroupBoxFields
             // 
+            GroupBoxFields.Controls.Add(ButtonRemoveField);
+            GroupBoxFields.Controls.Add(ButtonAddField);
+            GroupBoxFields.Controls.Add(DataGridViewFields);
             GroupBoxFields.Controls.Add(ButtonCommit);
-            GroupBoxFields.Controls.Add(listView1);
-            GroupBoxFields.Location = new Point(12, 149);
+            GroupBoxFields.Location = new Point(12, 112);
             GroupBoxFields.Name = "GroupBoxFields";
-            GroupBoxFields.Size = new Size(770, 411);
+            GroupBoxFields.Size = new Size(770, 448);
             GroupBoxFields.TabIndex = 2;
             GroupBoxFields.TabStop = false;
             GroupBoxFields.Text = "Fields";
             // 
-            // listView1
+            // ButtonRemoveField
             // 
-            listView1.Columns.AddRange(new ColumnHeader[] { CName, CType, CNN, CPK, CAI, CDefault });
-            listView1.Location = new Point(6, 22);
-            listView1.Name = "listView1";
-            listView1.Size = new Size(758, 346);
-            listView1.TabIndex = 0;
-            listView1.UseCompatibleStateImageBehavior = false;
-            listView1.View = View.Details;
+            ButtonRemoveField.Location = new Point(106, 15);
+            ButtonRemoveField.Name = "ButtonRemoveField";
+            ButtonRemoveField.Size = new Size(94, 29);
+            ButtonRemoveField.TabIndex = 5;
+            ButtonRemoveField.Text = "Remove";
+            ButtonRemoveField.UseVisualStyleBackColor = true;
+            ButtonRemoveField.Click += ButtonRemoveField_Click;
             // 
-            // CName
+            // ButtonAddField
             // 
-            CName.Text = "Name";
-            CName.Width = 120;
+            ButtonAddField.Location = new Point(6, 15);
+            ButtonAddField.Name = "ButtonAddField";
+            ButtonAddField.Size = new Size(94, 29);
+            ButtonAddField.TabIndex = 4;
+            ButtonAddField.Text = "Add";
+            ButtonAddField.UseVisualStyleBackColor = true;
+            ButtonAddField.Click += ButtonAddField_Click;
             // 
-            // CType
+            // DataGridViewFields
             // 
-            CType.Text = "Type";
-            CType.Width = 120;
-            // 
-            // CNN
-            // 
-            CNN.Text = "Not Null";
-            CNN.Width = 120;
-            // 
-            // CPK
-            // 
-            CPK.Text = "Primary Key";
-            CPK.Width = 120;
-            // 
-            // CAI
-            // 
-            CAI.Text = "Auto Increment";
-            CAI.Width = 120;
-            // 
-            // CDefault
-            // 
-            CDefault.Text = "Default Value";
-            CDefault.Width = 120;
+            DataGridViewFields.AllowUserToAddRows = false;
+            DataGridViewFields.AllowUserToDeleteRows = false;
+            DataGridViewFields.BackgroundColor = SystemColors.Window;
+            DataGridViewFields.BorderStyle = BorderStyle.None;
+            DataGridViewFields.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DataGridViewFields.Columns.AddRange(new DataGridViewColumn[] { CName, CType, CNN, CDef, CPK, CU, CAI });
+            DataGridViewFields.Location = new Point(6, 50);
+            DataGridViewFields.MultiSelect = false;
+            DataGridViewFields.Name = "DataGridViewFields";
+            DataGridViewFields.RowHeadersVisible = false;
+            DataGridViewFields.Size = new Size(758, 357);
+            DataGridViewFields.TabIndex = 3;
+            DataGridViewFields.CellContentClick += DataGridViewFields_CellContentClick;
+            DataGridViewFields.CellValueChanged += DataGridViewFields_CellValueChanged;
             // 
             // ButtonCommit
             // 
-            ButtonCommit.Location = new Point(6, 376);
+            ButtonCommit.Location = new Point(6, 413);
             ButtonCommit.Name = "ButtonCommit";
             ButtonCommit.Size = new Size(94, 29);
             ButtonCommit.TabIndex = 2;
             ButtonCommit.Text = "Commit";
             ButtonCommit.UseVisualStyleBackColor = true;
+            ButtonCommit.Click += ButtonCommit_Click;
             // 
             // ButtonBack
             // 
@@ -142,6 +146,50 @@
             ButtonBack.Text = "Back";
             ButtonBack.UseVisualStyleBackColor = true;
             ButtonBack.Click += ButtonBack_Click;
+            // 
+            // CName
+            // 
+            CName.HeaderText = "Name";
+            CName.Name = "CName";
+            CName.Resizable = DataGridViewTriState.True;
+            CName.SortMode = DataGridViewColumnSortMode.NotSortable;
+            CName.Width = 160;
+            // 
+            // CType
+            // 
+            CType.HeaderText = "Type";
+            CType.Items.AddRange(new object[] { "INTEGER", "TEXT", "BLOB", "REAL", "NUMERIC" });
+            CType.Name = "CType";
+            CType.Width = 145;
+            // 
+            // CNN
+            // 
+            CNN.HeaderText = "Not Null";
+            CNN.Name = "CNN";
+            CNN.Width = 60;
+            // 
+            // CDef
+            // 
+            CDef.HeaderText = "Default";
+            CDef.Name = "CDef";
+            CDef.Width = 152;
+            // 
+            // CPK
+            // 
+            CPK.HeaderText = "Primary Key";
+            CPK.Name = "CPK";
+            CPK.Width = 80;
+            // 
+            // CU
+            // 
+            CU.HeaderText = "Unique";
+            CU.Name = "CU";
+            CU.Width = 60;
+            // 
+            // CAI
+            // 
+            CAI.HeaderText = "Auto Increment";
+            CAI.Name = "CAI";
             // 
             // DBModifierForm
             // 
@@ -159,6 +207,7 @@
             GroupBoxTableName.ResumeLayout(false);
             GroupBoxTableName.PerformLayout();
             GroupBoxFields.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DataGridViewFields).EndInit();
             ResumeLayout(false);
         }
 
@@ -168,14 +217,17 @@
         private GroupBox GroupBoxTableName;
         private Button ButtonTableRename;
         private GroupBox GroupBoxFields;
-        private ListView listView1;
-        private ColumnHeader CName;
-        private ColumnHeader CType;
-        private ColumnHeader CNN;
-        private ColumnHeader CPK;
-        private ColumnHeader CAI;
-        private ColumnHeader CDefault;
         private Button ButtonCommit;
         private Button ButtonBack;
+        private DataGridView DataGridViewFields;
+        private Button ButtonAddField;
+        private Button ButtonRemoveField;
+        private DataGridViewTextBoxColumn CName;
+        private DataGridViewComboBoxColumn CType;
+        private DataGridViewCheckBoxColumn CNN;
+        private DataGridViewTextBoxColumn CDef;
+        private DataGridViewCheckBoxColumn CPK;
+        private DataGridViewCheckBoxColumn CU;
+        private DataGridViewCheckBoxColumn CAI;
     }
 }

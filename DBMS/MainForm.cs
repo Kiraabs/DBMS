@@ -19,7 +19,7 @@ namespace DBMS
         void ScanDBFold()
         {
             foreach (var fi in DBRoot.Dir.GetFiles())
-                if (fi.Extension.Contains(".db"))
+                if (fi.Extension == ".db")
                     ListViewDBs.Items.Add(fi.Name.Replace(fi.Extension, string.Empty));
         }
 
@@ -30,22 +30,27 @@ namespace DBMS
                 return;
 
             DBFile.Open(ListViewDBs.SelectedItems[0].Text);
-            _ = new DBEditorForm().ShowDialog();
+            var dbef = new DBEditorForm();
+            dbef.FormClosed += Dbef_FormClosed;
+            dbef.Show();
+            Hide();
         }
+
 
         void TryDropDBFile()
         {
-            var oneDropped = false;
+            var atlOneDropped = false;
             for (int i = 0; i < ListViewDBs.SelectedItems.Count; i++)
                 if (DBFile.Drop(ListViewDBs.SelectedItems[i].Text))
-                    oneDropped = true;
+                    atlOneDropped = true;
 
-            if (oneDropped)
+            if (atlOneDropped)
             {
                 RefreshListView();
                 UserMSG.Info("Selected database file(-s) was successfully dropped!");
             }
         }
+        void Dbef_FormClosed(object? sender, FormClosedEventArgs e) => Show();
 
         void ButtonEditor_Click(object sender, EventArgs e) => TryOpenDBFile();
 
