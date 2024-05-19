@@ -30,7 +30,6 @@
         {
             ListViewTables = new ListView();
             ListViewTableInfo = new ListView();
-            CID = new ColumnHeader();
             CName = new ColumnHeader();
             CType = new ColumnHeader();
             CNN = new ColumnHeader();
@@ -59,18 +58,13 @@
             // 
             // ListViewTableInfo
             // 
-            ListViewTableInfo.Columns.AddRange(new ColumnHeader[] { CID, CName, CType, CNN, CDltVal, CPK });
+            ListViewTableInfo.Columns.AddRange(new ColumnHeader[] { CName, CType, CNN, CDltVal, CPK });
             ListViewTableInfo.Location = new Point(6, 22);
             ListViewTableInfo.Name = "ListViewTableInfo";
             ListViewTableInfo.Size = new Size(605, 434);
             ListViewTableInfo.TabIndex = 1;
             ListViewTableInfo.UseCompatibleStateImageBehavior = false;
             ListViewTableInfo.View = View.Details;
-            // 
-            // CID
-            // 
-            CID.Text = "ID";
-            CID.Width = 100;
             // 
             // CName
             // 
@@ -187,7 +181,6 @@
         private Button ButtonDropTable;
         private Button ButtonModifyTable;
         private Button ButtonQuit;
-        private ColumnHeader CID;
         private ColumnHeader CName;
         private ColumnHeader CType;
         private ColumnHeader CNN;

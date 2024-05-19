@@ -4,7 +4,7 @@ namespace DBMS.ClassLibrary
 {
     public sealed class DBTable : SQLiteVirtualTable
     {
-        readonly int _atrsCnt = 0;
+        readonly int _attrsCnt = 0;
         string _shem = string.Empty;
         List<DBTableAttribute> _atrs = [];
 
@@ -13,9 +13,9 @@ namespace DBMS.ClassLibrary
 
         public DBTable(string[] args) : base(args)
         {
-            _atrsCnt = DBQuery.TableRows(TableName).Count;
+            _attrsCnt = DBQuery.TableRows(TableName).Count;
             _shem = DBQuery.TableSchema(TableName);
-            GetAtrsFromDB();
+            GetAttrs();
         }
 
         public override bool Rename(string newName)
@@ -25,9 +25,14 @@ namespace DBMS.ClassLibrary
             return false;
         }
 
-        void GetAtrsFromDB()
+        public bool Alter()
         {
-            for (int i = 0; i < _atrsCnt; i++)
+            return DBQuery.AlterTable(TableName);
+        }
+
+        void GetAttrs()
+        {
+            for (int i = 0; i < _attrsCnt; i++)
                 _atrs.Add(new DBTableAttribute(DBQuery.TableRows(TableName)[i].ItemArray!, this));
         }
     }

@@ -10,11 +10,11 @@
             for (int i = 0; i < dgv.Rows.Count; i++)
             {
                 var atr = dt.Attributes[i].RowView();
-                for (int ri = 0, ai = 1; ri < atr.Length - 1; ri++, ai++)
-                    if (bool.TryParse(atr[ai], out var rt))
+                for (int ri = 0; ri < atr.Length; ri++)
+                    if (bool.TryParse(atr[ri], out var rt))
                         dgv.Rows[i].Cells[ri].Value = rt;
                     else
-                        dgv.Rows[i].Cells[ri].Value = atr[ai];
+                        dgv.Rows[i].Cells[ri].Value = atr[ri];
             }
         }
 

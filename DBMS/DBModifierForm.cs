@@ -107,7 +107,14 @@ namespace DBMS
                 if (UserMSG.Confirm("Are you sure about " +
                     "to commit all changes in table structure?") != DialogResult.Yes)
                     return;
+
                 _tabMod.DataGridViewToDBTable(DataGridViewFields);
+
+                if (_tabMod.Alter())
+                {
+                    UserMSG.Info("Table structure was successfully changed!");
+                    _hasChanges = false;
+                }    
             }
             else
                 UserMSG.Warn("There are no changes!");

@@ -4,19 +4,17 @@ namespace DBMS.ClassLibrary
 {
     public class DBTableAttribute : DbColumn
     {
-        public const int ArgsCount = 8;
-        const int IdIndex = 0;
-        const int NameIndex = 1;
-        const int TypeIndex = 2;
-        const int NotNullIndex = 3;
-        const int DefValIndex = 4;
-        const int PKIndex = 5;
-        const int UniqIndex = 6;
-        const int AutoIncIndex = 7;
+        public const int ArgsCount = 7;
+        const int NameIndex = 0;
+        const int TypeIndex = 1;
+        const int NotNullIndex = 2;
+        const int DefValIndex = 3;
+        const int PKIndex = 4;
+        const int UniqIndex = 5;
+        const int AutoIncIndex = 6;
         object[] _args = new object[ArgsCount];
         DBTable _dt = null!;
 
-        public int Id { get; private set; }
         public object DefValue { get; private set; } = string.Empty;
 
         public DBTableAttribute(object[] args, DBTable dt)
@@ -24,24 +22,37 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfObjectIsNull(dt, "Table was null or empty!");
             if (args != null && args.Length > 0 && args.Length <= ArgsCount)
             {
-                args.CopyTo(_args, 0);
                 _dt = dt;
+                ArgsPass(args);
                 GetInfo();
             }
             else
                 throw new ArgumentException("Arguments was null or there were too many or few arguments!");
         }
 
+        public (string Field, string PK) FieldView()
+        {
+            var field = DBString.BuildField(ColumnName, DataTypeName!, (bool)AllowDBNull!, (bool)IsUnique!);
+            var fpk = DBString.BuildPrimaryField(ColumnName, (bool)IsKey!, (bool)IsAutoIncrement!);
+            return (field, fpk);
+        }
+
+
         public string[] RowView()
         {
-            return [Id.ToString(),
-                    ColumnName.ToString(),
+            return [ColumnName.ToString(),
                     DataTypeName!.ToString(),
                     AllowDBNull.ToString()!,
                     DefValue.ToString()!,
                     IsKey.ToString()!,
                     IsUnique.ToString()!,
                     IsAutoIncrement.ToString()!];
+        }
+
+        void ArgsPass(in object[] args)
+        {
+            for (int i = 1; i < args.Length; i++)
+                _args[i - 1] = args[i];
         }
 
         void UniqueCheck() => IsUnique = CheckConstraint("UNIQUE");
@@ -52,11 +63,6 @@ namespace DBMS.ClassLibrary
         {
             #region Props initialization logic
             BaseTableName = _dt.TableName;
-
-            if (_args[IdIndex] != null)
-                Id = Convert.ToInt32(_args[IdIndex]);
-            else
-                Id = -1;
 
             if (_args[NameIndex] != null)
                 ColumnName = _args[NameIndex].ToString()!;

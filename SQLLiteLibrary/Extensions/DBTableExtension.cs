@@ -2,20 +2,26 @@
 {
     public static class DBTableExtension
     {
-        public static void DataGridViewToDBTable (this DBTable table, in DataGridView dgv)
+        public static void DataGridViewToDBTable(this DBTable table, in DataGridView dgv)
         {
             DBException.ThrowIfObjectIsNull(dgv, "Data grid view was null!");
 
-            if (table.Attributes.Count == dgv.RowCount)
+            for (int i = 0; i < dgv.RowCount; i++)
             {
-                for (int i = 0; i < table.Attributes.Count; i++)
+                var args = new object[DBTableAttribute.ArgsCount]; 
+                dgv.GetValuesFromCells(i).CopyTo(args, 1);
+
+                if (i >= table.Attributes.Count)
                 {
-                    var argsWithColId = new object[DBTableAttribute.ArgsCount];
-                    dgv.GetValuesFromCells(i).CopyTo(argsWithColId, 1);
-                    argsWithColId[0] = table.Attributes[i].Id;
-                    table.Attributes[i] = new DBTableAttribute(argsWithColId, table);
+                    table.Attributes.Add(new DBTableAttribute(args, table));
+                }
+                else
+                {
+                    table.Attributes[i] = new DBTableAttribute(args, table);
                 }
             }
         }
+
+        
     }
 }

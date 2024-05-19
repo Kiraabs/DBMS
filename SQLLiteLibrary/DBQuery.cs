@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.Xml.Linq;
 
 namespace DBMS.ClassLibrary
 {
@@ -7,6 +9,8 @@ namespace DBMS.ClassLibrary
     /// </summary>
     public static class DBQuery
     {
+        // TODO: Add additional check of existing table in db file
+
         public static DataRowCollection TableRows(string name)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
@@ -48,25 +52,29 @@ namespace DBMS.ClassLibrary
             return DBProvider.ExecuteSimpleCmd($"CREATE TABLE '{name}' (\"ID\" INTEGER, PRIMARY KEY(\"ID\" AUTOINCREMENT))");
         }
 
-
-        static string BuildField(string name, string type, bool notNull, bool uniq, string defVal = "")
+        public static bool AlterTable(DBTable dt)
         {
-            var fld = $"{name} {type}";
-            if (notNull)
-                fld += " NOT NULL";
-            if (defVal != "")
-                fld += $" DEFAULT {defVal}";
-            if (uniq)
-                fld += " UNIQUE";
-            return fld += ",";
+            DBException.ThrowIfObjectIsNull(dt, "Table was null!");
+            var newShem = dt.Shema.Replace(dt.Shema, DBString.BuildTableSchema(dt)).Replace(dt.TableName, $"new_{dt.TableName}");
+
+            try
+            {
+                DBProvider.ExecuteSimpleCmd(newShem);
+                DBProvider.ExecuteSimpleCmd($"INSERT INTO 'new_{dt.TableName}' SELECT * FROM '{dt.TableName}'");
+                DBProvider.ExecuteSimpleCmd($"DROP TABLE '{dt.TableName}'");
+                return TableRename($"new_{dt.TableName}", $"{dt.TableName}");
+            }
+            catch (Exception ex)
+            {
+                UserMSG.Error(ex.Message);
+                return false;
+            }
         }
 
-        static string BuildPrimary(string name, bool ai)
+        public static bool AlterTable(string name)
         {
-            var pk = $"PRIMARY KEY('{name}')";
-            if (ai)
-                pk += " AUTOINCREMENT";
-            return pk;
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
+            return AlterTable(DBFile.GetTable(name));
         }
     }
 }
