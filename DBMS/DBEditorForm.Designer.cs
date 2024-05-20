@@ -41,6 +41,7 @@
             ButtonQuit = new Button();
             groupBox1 = new GroupBox();
             groupBox2 = new GroupBox();
+            ButtonEditData = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -49,7 +50,7 @@
             // 
             ListViewTables.Location = new Point(6, 22);
             ListViewTables.Name = "ListViewTables";
-            ListViewTables.Size = new Size(438, 398);
+            ListViewTables.Size = new Size(549, 398);
             ListViewTables.TabIndex = 0;
             ListViewTables.UseCompatibleStateImageBehavior = false;
             ListViewTables.View = View.List;
@@ -123,7 +124,7 @@
             // 
             // ButtonQuit
             // 
-            ButtonQuit.Location = new Point(339, 426);
+            ButtonQuit.Location = new Point(450, 426);
             ButtonQuit.Name = "ButtonQuit";
             ButtonQuit.Size = new Size(105, 30);
             ButtonQuit.TabIndex = 5;
@@ -133,14 +134,15 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(ButtonEditData);
             groupBox1.Controls.Add(ListViewTables);
+            groupBox1.Controls.Add(ButtonQuit);
             groupBox1.Controls.Add(ButtonCreateTable);
             groupBox1.Controls.Add(ButtonModifyTable);
             groupBox1.Controls.Add(ButtonDropTable);
-            groupBox1.Controls.Add(ButtonQuit);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(455, 462);
+            groupBox1.Size = new Size(570, 462);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "Tables";
@@ -148,18 +150,28 @@
             // groupBox2
             // 
             groupBox2.Controls.Add(ListViewTableInfo);
-            groupBox2.Location = new Point(473, 12);
+            groupBox2.Location = new Point(588, 12);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(618, 462);
+            groupBox2.Size = new Size(619, 462);
             groupBox2.TabIndex = 7;
             groupBox2.TabStop = false;
             groupBox2.Text = "Table Attributes";
+            // 
+            // ButtonEditData
+            // 
+            ButtonEditData.Location = new Point(339, 426);
+            ButtonEditData.Name = "ButtonEditData";
+            ButtonEditData.Size = new Size(105, 30);
+            ButtonEditData.TabIndex = 6;
+            ButtonEditData.Text = "Edit Table Data";
+            ButtonEditData.UseVisualStyleBackColor = true;
+            ButtonEditData.Click += ButtonEditData_Click;
             // 
             // DBEditorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1099, 483);
+            ClientSize = new Size(1217, 483);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -188,5 +200,6 @@
         private ColumnHeader CPK;
         private GroupBox groupBox1;
         private GroupBox groupBox2;
+        private Button ButtonEditData;
     }
 }

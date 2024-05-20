@@ -4,7 +4,7 @@ namespace DBMS.ClassLibrary.Extensions
 {
     public static class DataGridViewExtension
     {
-        public static void DBTableToDataGridView(this DataGridView dgv, in DBTable dt)
+        public static void DBTableAttributesAsRows(this DataGridView dgv, in DBTable dt)
         {
             DBException.ThrowIfObjectIsNull(dt, "Database table was null!");
             dgv.Rows.Add(dt.Attributes.Count);
@@ -20,11 +20,41 @@ namespace DBMS.ClassLibrary.Extensions
             }
         }
 
-        public static void DBTableToDataGridView(this DataGridView dgv, string name)
+        public static void GetDBTableData(this DataGridView dgv, in DBTable dt)
         {
-            DBException.ThrowIfStringIsEmpty(name, "Database table name was null or empty!");
-            var dt = DBFile.GetTable(name);
-            dgv.DBTableToDataGridView(dt);
+            DBException.ThrowIfObjectIsNull(dt, "Database table was null!");
+
+            if (dt.Data.Length != 0)
+            {
+                dgv.Rows.Add(dt.Data.Length);
+                for (int i = 0; i < dt.Data.Length; i++)
+                    for (int j = 0; j < dt.Data[i].ItemArray.Length; j++)
+                        dgv.Rows[i].Cells[j].Value = dt.Data[i].ItemArray[j];
+            }
+        }
+
+        public static void DBTableAttributesAsCols(this DataGridView dgv, in DBTable dt)
+        {
+            DBException.ThrowIfObjectIsNull(dt, "Database table was null!");
+
+            for (int i = 0; i < dt.Attributes.Count; i++)
+                dgv.Columns.Add($"C{dt.Attributes[i].ColumnName}", dt.Attributes[i].ColumnName);
+        }
+
+        public static void DBTableAttributesAsCols(this DataGridView dgv, string dbTabName)
+        {
+            DBException.ThrowIfStringIsEmpty(dbTabName, "Database table name was null or empty!");
+            var dt = DBFile.GetTable(dbTabName);
+            if (dt != null)
+                dgv.DBTableAttributesAsCols(dt);
+        }
+
+        public static void DBTableAttributesAsRows(this DataGridView dgv, string dbTabName)
+        {
+            DBException.ThrowIfStringIsEmpty(dbTabName, "Database table name was null or empty!");
+            var dt = DBFile.GetTable(dbTabName);
+            if (dt != null)
+                dgv.DBTableAttributesAsRows(dt);
         }
 
         public static DataGridViewCell[] GetCellsByColIndex(this DataGridView dgv, int colInd)

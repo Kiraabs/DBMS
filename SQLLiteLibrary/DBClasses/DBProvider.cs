@@ -44,19 +44,15 @@ namespace DBMS.ClassLibrary.DBClasses
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static bool ExecuteSimpleCmd(string text)
+        public static (bool Executed, int Affected) ExecuteSimpleCmd(string text)
         {
             try
             {
                 WriteCmd(text);
-                _cmd.ExecuteNonQuery();
-                return true;
+                return (true, _cmd.ExecuteNonQuery());
             }
-            catch (Exception ex)
-            {
-                UserMSG.Error(ex.Message);
-                return false;
-            }
+            catch (Exception)
+                { return (false, 1); }
         }
 
         /// <summary>

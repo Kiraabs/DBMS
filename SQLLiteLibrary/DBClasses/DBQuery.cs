@@ -9,9 +9,13 @@ namespace DBMS.ClassLibrary.DBClasses
     /// </summary>
     public static class DBQuery
     {
-        // TODO: Add additional check of existing table in db file
+        public static DataRowCollection TableData(string name)
+        {
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
+            return DBProvider.RetrieveDataFromCmd($"SELECT * FROM '{name}'").Rows;
+        }
 
-        public static DataRowCollection TableRows(string name)
+        public static DataRowCollection TableAttributes(string name)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             return DBProvider.RetrieveDataFromCmd($"PRAGMA table_info('{name}')").Rows;
@@ -26,14 +30,14 @@ namespace DBMS.ClassLibrary.DBClasses
         public static bool DropTable(string name)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'");
+            return DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'").Executed;
         }
 
         public static bool TableRename(string name, string newName)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             DBException.ThrowIfStringIsEmpty(newName, "New table name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"ALTER TABLE '{name}' RENAME TO '{newName}'");
+            return DBProvider.ExecuteSimpleCmd($"ALTER TABLE '{name}' RENAME TO '{newName}'").Executed;
         }
 
         public static string[] GetTables()
@@ -49,7 +53,7 @@ namespace DBMS.ClassLibrary.DBClasses
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             DBException.ThrowIfStringIsEmpty(pkfName, "Primary key column name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkfName, "INTEGER")}, {DBString.BuildPrimaryField(pkfName, true)})");
+            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkfName, "INTEGER")}, {DBString.BuildPrimaryField(pkfName, true)})").Executed;
         }
 
         public static bool AlterTable(DBTable table, DBTableAttribute[] tempAttrs)
@@ -74,6 +78,19 @@ namespace DBMS.ClassLibrary.DBClasses
                 UserMSG.Error(ex.Message);
                 return false;
             }
+        }
+
+        public static bool InsertInto(string name, string[] vals)
+        {
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
+            DBException.ThrowIfObjectIsNull(vals, "Vals to insert was null!");
+            return DBProvider.ExecuteSimpleCmd($"INSERT INTO '{name}' VALUES ({string.Join(", ", vals)})").Executed;
+        }
+
+        public static (bool Executed, int Affected) DeleteAllFrom(string name)
+        {
+            DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
+            return DBProvider.ExecuteSimpleCmd($"DELETE FROM '{name}'");
         }
     }
 }

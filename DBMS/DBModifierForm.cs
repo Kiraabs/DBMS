@@ -16,7 +16,7 @@ namespace DBMS
             InitializeComponent();
             TextBoxTableName.Text = tableName;
             TextBoxTableName.SelectionStart = TextBoxTableName.TextLength;
-            DataGridViewFields.DBTableToDataGridView(_tabMod);
+            DataGridViewFields.DBTableAttributesAsRows(_tabMod);
         }
 
         void PKSelect()

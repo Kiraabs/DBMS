@@ -31,7 +31,6 @@
             ButtonAddDB = new Button();
             ButtonDropBD = new Button();
             ButtonEditor = new Button();
-            ButtonAIS = new Button();
             ListViewDBs = new ListView();
             ButtonOpenDB = new Button();
             SuspendLayout();
@@ -66,15 +65,6 @@
             ButtonEditor.UseVisualStyleBackColor = true;
             ButtonEditor.Click += ButtonEditor_Click;
             // 
-            // ButtonAIS
-            // 
-            ButtonAIS.Location = new Point(342, 282);
-            ButtonAIS.Name = "ButtonAIS";
-            ButtonAIS.Size = new Size(119, 23);
-            ButtonAIS.TabIndex = 3;
-            ButtonAIS.Text = "AIS";
-            ButtonAIS.UseVisualStyleBackColor = true;
-            // 
             // ListViewDBs
             // 
             ListViewDBs.Location = new Point(12, 12);
@@ -102,7 +92,6 @@
             ClientSize = new Size(473, 317);
             Controls.Add(ButtonOpenDB);
             Controls.Add(ListViewDBs);
-            Controls.Add(ButtonAIS);
             Controls.Add(ButtonEditor);
             Controls.Add(ButtonDropBD);
             Controls.Add(ButtonAddDB);
@@ -121,7 +110,6 @@
         private Button ButtonAddDB;
         private Button ButtonDropBD;
         private Button ButtonEditor;
-        private Button ButtonAIS;
         private ListView ListViewDBs;
         private Button ButtonOpenDB;
     }

@@ -41,13 +41,24 @@ namespace DBMS
 
         void OpenTableToModify()
         {
-            if (UserMSG.WarnIfTrue("You have no or several selected table(-s). Please, select only one!", 
-                ListViewTables.SelectedItems.Count != 1).True)
+            if (IsNotSelected())
                 return;
-
             var dbmf = new DBModifierForm(ListViewTables.SelectedItems[0].Text);
             if (dbmf.ShowDialog() == DialogResult.Cancel)
                 RefreshListView();
+        }
+
+        bool IsNotSelected()
+        {
+            return UserMSG.WarnIfTrue("You have no or several selected table(-s). Please, select only one!", ListViewTables.SelectedItems.Count != 1).True;
+        }
+
+        void OpenTableToEditData()
+        {
+            if (IsNotSelected())
+                return;
+            var dbdef = new DBDataEditorForm(ListViewTables.SelectedItems[0].Text);
+            dbdef.ShowDialog();
         }
 
         void ButtonModifyTable_Click(object sender, EventArgs e) => OpenTableToModify();
@@ -57,6 +68,8 @@ namespace DBMS
         void DBTableCreateForm_Closed(object? sender, FormClosedEventArgs e) => RefreshListView();
 
         void ButtonQuit_Click(object sender, EventArgs e) => Close();
+
+        void ButtonEditData_Click(object sender, EventArgs e) => OpenTableToEditData();
 
         void ButtonDropTable_Click(object sender, EventArgs e)
         {

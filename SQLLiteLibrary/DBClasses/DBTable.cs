@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using System.Data;
+using System.Data.SQLite;
 
 namespace DBMS.ClassLibrary.DBClasses
 {
@@ -7,9 +8,11 @@ namespace DBMS.ClassLibrary.DBClasses
         readonly int _attrsCnt = 0;
         string _shem = string.Empty;
         List<DBTableAttribute> _attrs = [];
+        DataRow[] _data = [];
 
         public string Shema { get => _shem; private set => _shem = value; }
         public List<DBTableAttribute> Attributes { get => _attrs; private set => _attrs = value; }
+        public DataRow[] Data { get => _data; private set => _data = value; }
 
         /// <summary>
         /// Constructor for auto creating table. Use it ONLY if table IS EXISTS in DB File.
@@ -17,9 +20,10 @@ namespace DBMS.ClassLibrary.DBClasses
         /// <param name="args"></param>
         public DBTable(string[] args) : base(args)
         {
-            _attrsCnt = DBQuery.TableRows(TableName).Count;
+            _attrsCnt = DBQuery.TableAttributes(TableName).Count;
             _shem = DBQuery.TableSchema(TableName);
             GetAttrs();
+            GetData();
         }
 
         /// <summary>
@@ -46,7 +50,15 @@ namespace DBMS.ClassLibrary.DBClasses
         void GetAttrs()
         {
             for (int i = 0; i < _attrsCnt; i++)
-                _attrs.Add(new DBTableAttribute(DBQuery.TableRows(TableName)[i].ItemArray!, this));
+                _attrs.Add(new DBTableAttribute(DBQuery.TableAttributes(TableName)[i].ItemArray!, this));
+        }
+
+        void GetData()
+        {
+            var data = DBQuery.TableData(TableName);
+            _data = new DataRow[data.Count];
+            for (int i = 0; i <  data.Count; i++)
+                _data[i] = data[i];
         }
     }
 }
