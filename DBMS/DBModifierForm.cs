@@ -7,7 +7,7 @@ namespace DBMS
     public partial class DBModifierForm : Form
     {
         bool _hasChanges;
-        DBTable _tabMod;
+        readonly DBTable _tabMod;
 
         public DBModifierForm(string tableName)
         {
@@ -17,7 +17,10 @@ namespace DBMS
             TextBoxTableName.Text = tableName;
             TextBoxTableName.SelectionStart = TextBoxTableName.TextLength;
             DataGridViewFields.DBTableAttributesAsRows(_tabMod);
+            DataGridViewFields.CellValueChanged += DataGridViewFields_CellValueChanged;
         }
+
+        void DataGridViewFields_CellValueChanged(object? sender, DataGridViewCellEventArgs e) => _hasChanges = true;
 
         void PKSelect()
         {
@@ -33,7 +36,7 @@ namespace DBMS
                     UserMSG.Info("Table successfully renamed!");
             }
             catch (Exception ex)
-                { UserMSG.Error(ex.Message); }
+            { UserMSG.Error(ex.Message); }
         }
 
         void MakeOnlyOneAI()
@@ -45,16 +48,15 @@ namespace DBMS
             pkCls[DataGridViewFields.SelectedCells[0].OwningRow.Index].Value = true;
         }
 
-        void ButtonBack_Click(object sender, EventArgs e)
+        void ButtonBack_Click(object sender, EventArgs e) => Close();
+
+        void DBModifierForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_hasChanges)
             {
-                if (UserMSG.Confirm("Are you sure about to exit? " +
-                    "All changes in table structure will be lost.") == DialogResult.Yes)
-                    Close();
+                if (UserMSG.Confirm("Are you sure about to exit? All changes will be lost.") != DialogResult.Yes)
+                    e.Cancel = true;
             }
-            else
-                Close();
         }
 
         void ButtonAddField_Click(object sender, EventArgs e)
@@ -117,7 +119,7 @@ namespace DBMS
                 {
                     UserMSG.Info("Table structure was successfully changed!");
                     _hasChanges = false;
-                }    
+                }
             }
             else
                 UserMSG.Warn("There are no changes!");

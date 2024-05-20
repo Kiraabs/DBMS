@@ -89,6 +89,7 @@
             Name = "DBDataEditorForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Editing Table Data";
+            FormClosing += DBDataEditorForm_FormClosing;
             GroupBoxTableData.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)DataGridViewTableData).EndInit();
             ResumeLayout(false);

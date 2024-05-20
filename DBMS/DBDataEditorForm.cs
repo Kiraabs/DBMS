@@ -6,7 +6,8 @@ namespace DBMS
 {
     public partial class DBDataEditorForm : Form
     {
-       readonly DBTable _data;
+        bool _hasChanges = false;
+        readonly DBTable _data;
 
         public DBDataEditorForm(string tableName)
         {
@@ -15,20 +16,25 @@ namespace DBMS
             InitializeComponent();
             DataGridViewTableData.DBTableAttributesAsCols(_data);
             DataGridViewTableData.GetDBTableData(_data);
+            DataGridViewTableData.CellValueChanged += DataGridViewTableData_CellValueChanged;
+            DataGridViewTableData.RowsRemoved += DataGridViewTableData_RowsRemoved;
         }
 
-        void ButtonBack_Click(object sender, EventArgs e)
-        {
-            if (UserMSG.Confirm("Are you sure about to exit?") == DialogResult.Yes)
-                Close();
-        }
+        void DataGridViewTableData_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) => _hasChanges = true;
+
+        void DataGridViewTableData_CellValueChanged(object? sender, DataGridViewCellEventArgs e) => _hasChanges = true;
+
+        void ButtonBack_Click(object sender, EventArgs e) => Close();
 
         void ButtonCommit_Click(object sender, EventArgs e)
         {
-            if (UserMSG.Confirm("Are you sure about to save changes?") == DialogResult.Yes)
+            if (_hasChanges)
             {
-                ExecuteCommitAsync();
+                if (UserMSG.Confirm("Are you sure about to save changes?") == DialogResult.Yes)
+                    ExecuteCommitAsync();
             }
+            else
+                UserMSG.Warn("There are no changes!");
         }
 
         async void ExecuteCommitAsync()
@@ -41,9 +47,7 @@ namespace DBMS
             // very bad code section
 
             var hasErrors = false;
-            var hasChanges = false;
-            if (DBQuery.DeleteAllFrom(_data.TableName).Affected > 0)
-                hasChanges = true;
+            DBQuery.DeleteAllFrom(_data.TableName);
 
             for (int i = 0; i < DataGridViewTableData.RowCount; i++)
             {
@@ -57,17 +61,27 @@ namespace DBMS
                     if (!DBQuery.InsertInto(_data.TableName, vals))
                         hasErrors = true;
                     else
-                        hasChanges = true;
+                        _hasChanges = true;
                 }
             }
 
             if (hasErrors)
                 UserMSG.Warn("Some data has errors and hasn't been saved!");
-            else if (hasChanges)
+            else if (_hasChanges)
                 UserMSG.Info("Data was successfully saved!");
             else
                 UserMSG.Warn("No data to save!");
             DBFile.UpdateTables();
+            _hasChanges = false;
+        }
+
+        void DBDataEditorForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_hasChanges)
+            {
+                if (UserMSG.Confirm("Are you sure about to exit? All changes will be lost.") != DialogResult.Yes)
+                    e.Cancel = true;
+            }
         }
     }
 }

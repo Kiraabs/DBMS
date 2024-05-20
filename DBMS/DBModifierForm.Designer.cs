@@ -203,6 +203,7 @@
             Name = "DBModifierForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Table Modifier ";
+            FormClosing += DBModifierForm_FormClosing;
             GroupBoxTableName.ResumeLayout(false);
             GroupBoxTableName.PerformLayout();
             GroupBoxFields.ResumeLayout(false);
