@@ -56,12 +56,12 @@ namespace DBMS.ClassLibrary.DBClasses
         {
             DBException.ThrowIfObjectIsNull(table, "Table was null!");
             DBException.ThrowIfObjectIsNull(tempAttrs, "Temporal table attributes was null!");
-            // creating temporal table just as program object
+            // creating temporal table just as program object.
             var temporal = new DBTable([table.Arguments[0], table.DatabaseName, $"temp_{table.TableName}"], tempAttrs); 
 
             try
             {
-                DBProvider.ExecuteSimpleCmd(temporal.Shema); // creating temporal table directly in database
+                DBProvider.ExecuteSimpleCmd(temporal.Shema); // creating temporal table directly in DB file
                 var (Intersection, IsIntersects) = temporal.ColumnIntersection(table);
                 if (IsIntersects)
                     DBProvider.ExecuteSimpleCmd(DBString.BuildInsertIntoSelect(temporal.TableName, table.TableName, Intersection, Intersection)); 

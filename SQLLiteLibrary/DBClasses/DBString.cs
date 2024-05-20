@@ -1,6 +1,4 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-
-namespace DBMS.ClassLibrary.DBClasses
+﻿namespace DBMS.ClassLibrary.DBClasses
 {
     public static class DBString
     {
@@ -24,10 +22,13 @@ namespace DBMS.ClassLibrary.DBClasses
                 var (Field, PK) = dt.Attributes[i].FieldView();
                 if (PK != string.Empty)
                     pk = PK;
-                newShem += $"{Field}, ";
+                if (i + 1 != dt.Attributes.Count)
+                    newShem += $"{Field}, ";
+                else
+                    newShem += $"{Field}";
             }
 
-            return newShem += $"{pk})";
+            return newShem += $", {pk})";
         }
 
         public static string BuildField(string name, string type, bool notNull = false, bool uniq = false, string defVal = "")

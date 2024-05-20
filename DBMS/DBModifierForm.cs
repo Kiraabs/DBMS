@@ -59,6 +59,8 @@ namespace DBMS
 
         void ButtonAddField_Click(object sender, EventArgs e)
         {
+            if (DataGridViewFields.RowCount == 0)
+                ButtonCommit.Enabled = true;
             DataGridViewFields.Rows.Add();
             DataGridViewFields.Rows[^1].Cells["CName"].Value = $"Field {DataGridViewFields.RowCount}";
             DataGridViewFields.Rows[^1].Cells["CType"].Value = "INTEGER";
@@ -74,6 +76,8 @@ namespace DBMS
 
             DataGridViewFields.Rows.Remove(DataGridViewFields.SelectedCells[0].OwningRow);
             _hasChanges = true;
+            if (DataGridViewFields.RowCount == 0)
+                ButtonCommit.Enabled = false;
         }
 
         void DataGridViewFields_CellContentClick(object sender, DataGridViewCellEventArgs e)

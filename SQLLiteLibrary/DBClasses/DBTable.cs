@@ -12,7 +12,7 @@ namespace DBMS.ClassLibrary.DBClasses
         public List<DBTableAttribute> Attributes { get => _attrs; private set => _attrs = value; }
 
         /// <summary>
-        /// Constructor for auto creating.
+        /// Constructor for auto creating table. Use it ONLY if table IS EXISTS in DB File.
         /// </summary>
         /// <param name="args"></param>
         public DBTable(string[] args) : base(args)
@@ -23,7 +23,8 @@ namespace DBMS.ClassLibrary.DBClasses
         }
 
         /// <summary>
-        /// Constructor for manually creating.
+        /// Constructor for manually creating table. Usually used, when table is doesn't exist in DB File. 
+        /// So, after init you can create this table by it schema using a create query.
         /// </summary>
         /// <param name="args"></param>
         /// <param name="attrs"></param>
