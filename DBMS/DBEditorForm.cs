@@ -10,6 +10,7 @@ namespace DBMS
         {
             InitializeComponent();
             ScanDB();
+            Text = $"Editing Database: {DBFile.Name}";
         }
 
         void ScanDB()

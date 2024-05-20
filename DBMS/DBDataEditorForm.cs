@@ -18,6 +18,7 @@ namespace DBMS
             DataGridViewTableData.GetDBTableData(_data);
             DataGridViewTableData.CellValueChanged += DataGridViewTableData_CellValueChanged;
             DataGridViewTableData.RowsRemoved += DataGridViewTableData_RowsRemoved;
+            Text = $"Editing Table: {_data.TableName}";
         }
 
         void DataGridViewTableData_RowsRemoved(object? sender, DataGridViewRowsRemovedEventArgs e) => _hasChanges = true;

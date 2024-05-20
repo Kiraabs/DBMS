@@ -13,6 +13,7 @@ namespace DBMS.ClassLibrary.DBClasses
         static List<DBTable> _tbls = null!;
 
         public static bool IsOpen { get; private set; }
+        public static string Name { get => _name; private set => _name = value; }
         public static List<DBTable> Tables 
         {
             get

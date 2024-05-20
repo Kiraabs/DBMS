@@ -5,7 +5,7 @@ using System.Data.SQLite;
 namespace DBMS.ClassLibrary.DBClasses
 {
     /// <summary>
-    /// Provides connection and executes cmd's to DB file.
+    /// Provides connection and executes cmds to DB file.
     /// </summary>
     public static class DBProvider
     {

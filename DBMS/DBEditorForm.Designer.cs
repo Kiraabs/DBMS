@@ -178,7 +178,7 @@
             MaximizeBox = false;
             Name = "DBEditorForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Database Editor";
+            Text = "Database Editing";
             FormClosed += DBEditorForm_FormClosed;
             groupBox1.ResumeLayout(false);
             groupBox2.ResumeLayout(false);

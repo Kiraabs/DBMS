@@ -44,7 +44,7 @@
             GroupBoxTableData.Size = new Size(825, 440);
             GroupBoxTableData.TabIndex = 0;
             GroupBoxTableData.TabStop = false;
-            GroupBoxTableData.Text = "Table ";
+            GroupBoxTableData.Text = "Data";
             // 
             // DataGridViewTableData
             // 
