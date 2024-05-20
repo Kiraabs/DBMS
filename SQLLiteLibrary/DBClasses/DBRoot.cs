@@ -1,4 +1,4 @@
-﻿namespace DBMS.ClassLibrary
+﻿namespace DBMS.ClassLibrary.DBClasses
 {
     /// <summary>
     /// Represents root directory of DB files.

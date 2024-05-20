@@ -59,7 +59,7 @@
             // ListViewTableInfo
             // 
             ListViewTableInfo.Columns.AddRange(new ColumnHeader[] { CName, CType, CNN, CDltVal, CPK });
-            ListViewTableInfo.Location = new Point(6, 22);
+            ListViewTableInfo.Location = new Point(7, 22);
             ListViewTableInfo.Name = "ListViewTableInfo";
             ListViewTableInfo.Size = new Size(605, 434);
             ListViewTableInfo.TabIndex = 1;
@@ -117,7 +117,7 @@
             ButtonModifyTable.Name = "ButtonModifyTable";
             ButtonModifyTable.Size = new Size(105, 30);
             ButtonModifyTable.TabIndex = 4;
-            ButtonModifyTable.Text = "Modife Table";
+            ButtonModifyTable.Text = "Modify Table";
             ButtonModifyTable.UseVisualStyleBackColor = true;
             ButtonModifyTable.Click += ButtonModifyTable_Click;
             // 

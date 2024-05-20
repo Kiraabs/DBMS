@@ -1,4 +1,4 @@
-﻿namespace DBMS.ClassLibrary
+﻿namespace DBMS.ClassLibrary.Other
 {
     public static class UserMSG
     {

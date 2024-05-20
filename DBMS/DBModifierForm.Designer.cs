@@ -202,7 +202,7 @@
             MaximizeBox = false;
             Name = "DBModifierForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Modify Table";
+            Text = "Table Modifier ";
             GroupBoxTableName.ResumeLayout(false);
             GroupBoxTableName.PerformLayout();
             GroupBoxFields.ResumeLayout(false);

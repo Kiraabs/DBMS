@@ -1,4 +1,6 @@
-﻿namespace DBMS.ClassLibrary.Extensions
+﻿using DBMS.ClassLibrary.DBClasses;
+
+namespace DBMS.ClassLibrary.Extensions
 {
     public static class ListViewExtension
     {

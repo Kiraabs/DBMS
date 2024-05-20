@@ -1,7 +1,8 @@
-﻿using System.Data;
+﻿using DBMS.ClassLibrary.Other;
+using System.Data;
 using System.Data.SQLite;
 
-namespace DBMS.ClassLibrary
+namespace DBMS.ClassLibrary.DBClasses
 {
     /// <summary>
     /// Provides connection and executes cmd's to DB file.

@@ -1,6 +1,6 @@
 ﻿using static System.Net.Mime.MediaTypeNames;
 
-namespace DBMS.ClassLibrary
+namespace DBMS.ClassLibrary.DBClasses
 {
     public static class DBString
     {
@@ -10,9 +10,7 @@ namespace DBMS.ClassLibrary
             DBException.ThrowIfStringIsEmpty(vals.ToString()!, "Values was null!");
             DBException.ThrowIfStringIsEmpty(from, "From was null!");
             DBException.ThrowIfStringIsEmpty(to, "To was null!");
-            var cls = string.Join(", ", cols);
-            var vls = string.Join(", ", vals);
-            return $"INSERT INTO {to} ({cls}) SELECT {vls} FROM {from}";
+            return $"INSERT INTO {to} ({string.Join(", ", cols)}) SELECT {string.Join(", ", vals)} FROM {from}";
         }
 
         public static string BuildTableSchema(in DBTable dt)

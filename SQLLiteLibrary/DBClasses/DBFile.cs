@@ -1,6 +1,7 @@
-﻿using System.Data;
+﻿using DBMS.ClassLibrary.Other;
+using System.Data;
 
-namespace DBMS.ClassLibrary
+namespace DBMS.ClassLibrary.DBClasses
 {
     /// <summary>
     /// Represents DB file.
@@ -21,6 +22,8 @@ namespace DBMS.ClassLibrary
             }
             private set => _tbls = value;
         }
+
+        public static bool UpdateTables() => ReadTables(true);
 
         public static void Close()
         {
@@ -65,14 +68,15 @@ namespace DBMS.ClassLibrary
             return FileAction(() => File.Delete(_path));
         }
 
-        public static bool CreateTable(string name)
+        public static bool CreateTable(string name, string pkfName)
         {
             DBException.ThrowIfDBFileIsNotOpened(_path);
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
+            DBException.ThrowIfStringIsEmpty(pkfName, "Primary key field name was null or empty!");
             if (UserMSG.WarnIfTrue("Table name was empty or already exists!", TableIsExist(name)).True)
                 return false;
 
-            if (DBQuery.CreateTable(name, "f"))
+            if (DBQuery.CreateTable(name, pkfName))
                 return ReadTables();
             return false;
         }

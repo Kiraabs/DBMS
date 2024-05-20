@@ -1,6 +1,6 @@
 ﻿using System.Data.SQLite;
 
-namespace DBMS.ClassLibrary
+namespace DBMS.ClassLibrary.DBClasses
 {
     public sealed class DBTable : SQLiteVirtualTable
     {

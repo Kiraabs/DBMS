@@ -1,9 +1,9 @@
 ﻿using System.Data.SQLite;
 
-namespace DBMS.ClassLibrary
+namespace DBMS.ClassLibrary.DBClasses
 {
     public static class DBException
-    { 
+    {
         public static void ThrowIfStringIsEmpty(string str, string msg)
         {
             if (string.IsNullOrWhiteSpace(str))
@@ -12,7 +12,7 @@ namespace DBMS.ClassLibrary
 
         public static void ThrowIfObjectIsNull(object obj, string msg)
         {
-            if (obj == null) 
+            if (obj == null)
                 throw new ArgumentException($"{msg}");
         }
 

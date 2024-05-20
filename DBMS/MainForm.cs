@@ -1,4 +1,5 @@
-using DBMS.ClassLibrary;
+using DBMS.ClassLibrary.DBClasses;
+using DBMS.ClassLibrary.Other;
 
 namespace DBMS
 {

@@ -1,4 +1,5 @@
-﻿using DBMS.ClassLibrary;
+﻿using DBMS.ClassLibrary.DBClasses;
+using DBMS.ClassLibrary.Other;
 
 namespace DBMS
 {
@@ -13,10 +14,12 @@ namespace DBMS
         {
             if (UserMSG.WarnIfTextEmpty("Please, enter the table name!", TextBoxTableName.Text).Empty)
                 return;
+            if (UserMSG.WarnIfTextEmpty("Please, enter the primary key field name!", TextBoxPKFName.Text).Empty)
+                return;
 
             try
             {
-                if (DBFile.CreateTable(TextBoxTableName.Text))
+                if (DBFile.CreateTable(TextBoxTableName.Text, TextBoxPKFName.Text))
                     UserMSG.Info("Table successfully created");
             }
             catch (Exception ex)

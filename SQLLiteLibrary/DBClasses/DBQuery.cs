@@ -1,9 +1,8 @@
 ﻿using DBMS.ClassLibrary.Extensions;
-using System.Collections.Generic;
+using DBMS.ClassLibrary.Other;
 using System.Data;
-using System.Xml.Linq;
 
-namespace DBMS.ClassLibrary
+namespace DBMS.ClassLibrary.DBClasses
 {
     /// <summary>
     /// Contains queries to database.
@@ -46,11 +45,11 @@ namespace DBMS.ClassLibrary
             return tbls;
         }
 
-        public static bool CreateTable(string name, string pkName)
+        public static bool CreateTable(string name, string pkfName)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
-            DBException.ThrowIfStringIsEmpty(pkName, "Primary key column name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkName, "INTEGER")}, {DBString.BuildPrimaryField(pkName, true)})");
+            DBException.ThrowIfStringIsEmpty(pkfName, "Primary key column name was null or empty!");
+            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkfName, "INTEGER")}, {DBString.BuildPrimaryField(pkfName, true)})");
         }
 
         public static bool AlterTable(DBTable table, DBTableAttribute[] tempAttrs)
@@ -62,15 +61,13 @@ namespace DBMS.ClassLibrary
 
             try
             {
-                var insert = DBString.BuildInsertIntoSelect(
-                    temporal.TableName, 
-                    table.TableName, 
-                    temporal.ColumnIntersection(table), 
-                    temporal.ColumnIntersection(table));
                 DBProvider.ExecuteSimpleCmd(temporal.Shema); // creating temporal table directly in database
-                DBProvider.ExecuteSimpleCmd(insert);
+                var (Intersection, IsIntersects) = temporal.ColumnIntersection(table);
+                if (IsIntersects)
+                    DBProvider.ExecuteSimpleCmd(DBString.BuildInsertIntoSelect(temporal.TableName, table.TableName, Intersection, Intersection)); 
                 DBProvider.ExecuteSimpleCmd($"DROP TABLE '{table.TableName}'");
-                return TableRename($"{temporal.TableName}", $"{table.TableName}");
+                TableRename($"{temporal.TableName}", $"{table.TableName}");
+                return DBFile.UpdateTables(); // just need to update db file, cuz temporal table doesn't exist in it
             }
             catch (Exception ex)
             {
