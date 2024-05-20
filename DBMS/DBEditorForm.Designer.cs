@@ -40,8 +40,8 @@
             ButtonModifyTable = new Button();
             ButtonQuit = new Button();
             groupBox1 = new GroupBox();
-            groupBox2 = new GroupBox();
             ButtonEditData = new Button();
+            groupBox2 = new GroupBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -62,7 +62,7 @@
             ListViewTableInfo.Columns.AddRange(new ColumnHeader[] { CName, CType, CNN, CDltVal, CPK });
             ListViewTableInfo.Location = new Point(7, 22);
             ListViewTableInfo.Name = "ListViewTableInfo";
-            ListViewTableInfo.Size = new Size(605, 434);
+            ListViewTableInfo.Size = new Size(506, 434);
             ListViewTableInfo.TabIndex = 1;
             ListViewTableInfo.UseCompatibleStateImageBehavior = false;
             ListViewTableInfo.View = View.Details;
@@ -147,16 +147,6 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Tables";
             // 
-            // groupBox2
-            // 
-            groupBox2.Controls.Add(ListViewTableInfo);
-            groupBox2.Location = new Point(588, 12);
-            groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(619, 462);
-            groupBox2.TabIndex = 7;
-            groupBox2.TabStop = false;
-            groupBox2.Text = "Table Attributes";
-            // 
             // ButtonEditData
             // 
             ButtonEditData.Location = new Point(339, 426);
@@ -167,11 +157,21 @@
             ButtonEditData.UseVisualStyleBackColor = true;
             ButtonEditData.Click += ButtonEditData_Click;
             // 
+            // groupBox2
+            // 
+            groupBox2.Controls.Add(ListViewTableInfo);
+            groupBox2.Location = new Point(588, 12);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new Size(524, 462);
+            groupBox2.TabIndex = 7;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Table Attributes";
+            // 
             // DBEditorForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1217, 483);
+            ClientSize = new Size(1119, 483);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             FormBorderStyle = FormBorderStyle.FixedDialog;

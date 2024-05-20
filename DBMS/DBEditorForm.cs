@@ -81,6 +81,7 @@ namespace DBMS
                 $"table(-s)?") == DialogResult.Yes)
                 TryDropTable();
         }
+
         void ButtonCreateTable_Click(object sender, EventArgs e)
         {
             var dbtcn = new DBTableCreateForm();

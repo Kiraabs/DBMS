@@ -30,14 +30,14 @@ namespace DBMS.ClassLibrary.DBClasses
         public static bool DropTable(string name)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'").Executed;
+            return DBProvider.ExecuteSimpleCmd($"DROP TABLE '{name}'");
         }
 
         public static bool TableRename(string name, string newName)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             DBException.ThrowIfStringIsEmpty(newName, "New table name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"ALTER TABLE '{name}' RENAME TO '{newName}'").Executed;
+            return DBProvider.ExecuteSimpleCmd($"ALTER TABLE '{name}' RENAME TO '{newName}'");
         }
 
         public static string[] GetTables()
@@ -53,7 +53,7 @@ namespace DBMS.ClassLibrary.DBClasses
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             DBException.ThrowIfStringIsEmpty(pkfName, "Primary key column name was null or empty!");
-            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkfName, "INTEGER")}, {DBString.BuildPrimaryField(pkfName, true)})").Executed;
+            return DBProvider.ExecuteSimpleCmd($"CREATE TABLE {name} ({DBString.BuildField(pkfName, "INTEGER")}, {DBString.BuildPrimaryField(pkfName, true)})");
         }
 
         public static bool AlterTable(DBTable table, DBTableAttribute[] tempAttrs)
@@ -84,10 +84,10 @@ namespace DBMS.ClassLibrary.DBClasses
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             DBException.ThrowIfObjectIsNull(vals, "Vals to insert was null!");
-            return DBProvider.ExecuteSimpleCmd($"INSERT INTO '{name}' VALUES ({string.Join(", ", vals)})").Executed;
+            return DBProvider.ExecuteSimpleCmd($"INSERT INTO '{name}' VALUES ({string.Join(", ", vals)})");
         }
 
-        public static (bool Executed, int Affected) DeleteAllFrom(string name)
+        public static bool DeleteAllFrom(string name)
         {
             DBException.ThrowIfStringIsEmpty(name, "Table name was null or empty!");
             return DBProvider.ExecuteSimpleCmd($"DELETE FROM '{name}'");

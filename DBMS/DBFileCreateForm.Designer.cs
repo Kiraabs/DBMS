@@ -53,7 +53,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(512, 71);
+            ClientSize = new Size(510, 71);
             Controls.Add(ButtonCreate);
             Controls.Add(TextBoxDBName);
             FormBorderStyle = FormBorderStyle.FixedDialog;

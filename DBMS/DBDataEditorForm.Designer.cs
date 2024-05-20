@@ -48,6 +48,7 @@
             // 
             // DataGridViewTableData
             // 
+            DataGridViewTableData.AllowUserToOrderColumns = true;
             DataGridViewTableData.BackgroundColor = SystemColors.Window;
             DataGridViewTableData.BorderStyle = BorderStyle.None;
             DataGridViewTableData.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;

@@ -84,7 +84,7 @@ namespace DBMS
 
         void DataGridViewFields_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex > 0 && e.RowIndex > 0)
+            if (e.ColumnIndex >= 0 && e.RowIndex >= 0)
             {
                 if (DataGridViewFields[e.ColumnIndex, e.RowIndex].OwningColumn == CAI)
                     MakeOnlyOneAI();
@@ -111,8 +111,7 @@ namespace DBMS
         {
             if (_hasChanges)
             {
-                if (UserMSG.Confirm("Are you sure about " +
-                    "to commit all changes in table structure?") != DialogResult.Yes)
+                if (UserMSG.Confirm("Are you sure about to commit all changes?") != DialogResult.Yes)
                     return;
 
                 if (DBQuery.AlterTable(_tabMod, _tabMod.CollectAttrsFromDataGridView(DataGridViewFields)))
